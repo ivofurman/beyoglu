@@ -715,8 +715,8 @@
                     currentPinIndex = index;
                     map.flyTo([point.lat, point.lon], 17, { 
                         animate: true, 
-                        duration: 0.8,
-                        easeLinearity: 0.25
+                        duration: 1.2,
+                        easeLinearity: 0.15
                     });
                     markers[index].openPopup();
                     
@@ -736,10 +736,14 @@
         mapData = EMBEDDED_DATA;
         updateMarkers(0); // Show morning data by default
         
-        // Fit map to show all markers
+        // Fit map to show all markers with smooth initial animation
         if (markers.length > 0) {
             const group = new L.featureGroup(markers);
-            map.fitBounds(group.getBounds().pad(0.1));
+            map.flyToBounds(group.getBounds().pad(0.1), {
+                animate: true,
+                duration: 1.5,
+                easeLinearity: 0.15
+            });
         }
         
         // Initialize navigation UI after first markers are created
@@ -759,10 +763,14 @@
             currentPinIndex = 0;
             updateNavigationUI();
             
-            // Fit map to show all markers
+            // Fit map to show all markers with smooth animation
             if (markers.length > 0) {
                 const group = new L.featureGroup(markers);
-                map.fitBounds(group.getBounds().pad(0.1));
+                map.flyToBounds(group.getBounds().pad(0.1), {
+                    animate: true,
+                    duration: 1.2,
+                    easeLinearity: 0.15
+                });
             }
         });
         
@@ -773,11 +781,11 @@
             currentPinIndex = index;
             const marker = markers[index];
             
-            // Fly to marker with proper centering and zoom
+            // Fly to marker with smooth, gentle animation
             map.flyTo([marker._pointData.lat, marker._pointData.lon], 17, { 
                 animate: true, 
-                duration: 0.8,
-                easeLinearity: 0.25
+                duration: 1.2,
+                easeLinearity: 0.15
             });
             
             // Open popup
