@@ -782,6 +782,14 @@
         
         // Update markers based on time selection
         function updateMarkers(timeIndex) {
+            // Track currently open popup location before removing markers
+            let openPopupLatLng = null;
+            markers.forEach(marker => {
+                if (marker.isPopupOpen()) {
+                    openPopupLatLng = marker.getLatLng();
+                }
+            });
+            
             // Remove existing markers
             markers.forEach(marker => map.removeLayer(marker));
             markers = [];
@@ -798,6 +806,7 @@
             }
             
             // Add new markers
+            let markerToOpen = null;
             points.forEach((point, index) => {
                 const marker = L.marker([point.lat, point.lon], {
                     icon: createMarkerIcon(color, point.type)
@@ -822,7 +831,19 @@
                 // Store reference for card click
                 marker._pointData = point;
                 marker._pointIndex = index;
+                
+                // Check if this marker is at the same location as the previously open popup
+                if (openPopupLatLng && marker.getLatLng().equals(openPopupLatLng)) {
+                    markerToOpen = marker;
+                }
             });
+            
+            // Reopen popup at the same location if one was open
+            if (markerToOpen) {
+                setTimeout(() => {
+                    markerToOpen.openPopup();
+                }, 100); // Small delay to ensure marker is fully added
+            }
             
             // Update location list
             updateLocationList(points, timeIndex);
