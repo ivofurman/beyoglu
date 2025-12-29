@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İstiklal Caddesi - Interactive Time Map</title>
     
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
           integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
@@ -43,7 +48,7 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            font-family: 'Open Sans', 'Noto Sans', sans-serif;
             font-weight: 500;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
@@ -223,8 +228,8 @@
         /* Position symbols on clock face */
         .clock-option.morning {
             /* 8 o'clock position: 240 degrees */
-            top: 76%;
-            left: 19%;
+            top: 72.5%;
+            left: 11%;
         }
         
         .clock-option.morning:hover {
@@ -248,12 +253,17 @@
         
         .clock-option.night {
             /* 4 o'clock position: 120 degrees */
-            top: 57%;
-            right: 6%;
+            top: 72.5%;
+            left: 89%;
+            transform: translateX(-50%);
         }
         
         .clock-option.night:hover {
-            /* Keep position while scaling */
+            transform: translateX(-50%) scale(1.15);
+        }
+        
+        .clock-option.night.active {
+            transform: translateX(-50%) scale(1.2);
         }
         
         /* Clock hand pointing to active time */
@@ -584,9 +594,9 @@
                     <div class="clock-face"></div>
                     <div class="clock-hand morning" id="clockHand"></div>
                     <div class="clock-center morning"></div>
-                    <div class="clock-option morning active" data-time="0" title="Sabah - 7:00">🌅</div>
+                    <div class="clock-option morning active" data-time="0" title="Sabah - 8:00">🌅</div>
                     <div class="clock-option noon" data-time="1" title="Öğlen - 12:00">☀️</div>
-                    <div class="clock-option night" data-time="2" title="Akşam - 17:00">🌙</div>
+                    <div class="clock-option night" data-time="2" title="Akşam - 16:00">🌙</div>
                 </div>
             </div>
             
