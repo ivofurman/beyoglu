@@ -307,9 +307,20 @@
         
         // Convert lat/lon to SVG coordinates
         function latLonToSVG(lat, lon) {
+            // Validate inputs
+            if (typeof lat !== 'number' || typeof lon !== 'number' || isNaN(lat) || isNaN(lon)) {
+                console.warn('Invalid coordinates:', lat, lon);
+                return { x: SVG_WIDTH / 2, y: SVG_HEIGHT / 2 }; // Return center as fallback
+            }
+            
             const x = ((lon - LON_MIN) / (LON_MAX - LON_MIN)) * SVG_WIDTH;
             const y = ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN)) * SVG_HEIGHT;
-            return { x, y };
+            
+            // Clamp to valid range
+            return { 
+                x: Math.max(0, Math.min(SVG_WIDTH, x)), 
+                y: Math.max(0, Math.min(SVG_HEIGHT, y))
+            };
         }
         
         // Initialize SVG map
@@ -404,8 +415,9 @@
         
         // Escape HTML to prevent XSS
         function escapeHtml(text) {
+            if (text == null) return '';
             const div = document.createElement('div');
-            div.textContent = text;
+            div.textContent = String(text);
             return div.innerHTML;
         }
         
@@ -524,9 +536,18 @@
         svg.addEventListener('wheel', (e) => {
             e.preventDefault();
             const delta = e.deltaY > 0 ? 1.1 : 0.9;
-            currentViewBox.width *= delta;
-            currentViewBox.height *= delta;
-            svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.width} ${currentViewBox.height}`);
+            const newWidth = currentViewBox.width * delta;
+            const newHeight = currentViewBox.height * delta;
+            
+            // Limit zoom: min 50% of original, max 500% of original
+            const minWidth = SVG_WIDTH * 0.5;
+            const maxWidth = SVG_WIDTH * 5;
+            
+            if (newWidth >= minWidth && newWidth <= maxWidth) {
+                currentViewBox.width = newWidth;
+                currentViewBox.height = newHeight;
+                svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.width} ${currentViewBox.height}`);
+            }
         });
     </script>
 </body>
