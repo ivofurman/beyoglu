@@ -25,7 +25,8 @@ An interactive visualization of İstiklal Street and its surroundings in Istanbu
 ## How to Use
 
 1. **Open the Map**: Simply open `index.html` in any modern web browser
-   - **Note**: Requires internet connection to load Leaflet library and map tiles
+   - **Requires internet connection** for Leaflet library and map tiles
+   - Data is embedded in HTML, so no web server needed
 2. **Change Time Period**: Use the slider in the sidebar to switch between morning, noon, and night
 3. **View Location Details**: 
    - Click on location cards in the sidebar to fly to that location
@@ -34,6 +35,8 @@ An interactive visualization of İstiklal Street and its surroundings in Istanbu
    - Drag to pan
    - Scroll/pinch to zoom
    - Standard Leaflet map controls
+
+**Note:** If the map doesn't load, check your internet connection. The Leaflet library and map tiles require internet access.
 
 ## Requirements
 
