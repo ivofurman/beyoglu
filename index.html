@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstiklal Caddesi - Interactive Time Map</title>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            overflow: hidden;
+        }
+        
+        #mapContainer {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        #mapSVG {
+            width: 100%;
+            height: 100%;
+            cursor: grab;
+        }
+        
+        #mapSVG:active {
+            cursor: grabbing;
+        }
+        
+        .info-panel {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-width: 350px;
+        }
+        
+        .info-panel h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .info-panel p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .stats {
+            font-size: 12px;
+            color: #888;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        
+        .time-control {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            padding: 25px 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            min-width: 400px;
+        }
+        
+        .time-label {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #333;
+        }
+        
+        .time-indicator {
+            font-size: 28px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+        
+        .slider-container {
+            position: relative;
+            margin: 0 10px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #EBED58, #DE9612, #3E87A3);
+            outline: none;
+            -webkit-appearance: none;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        input[type="range"]::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #2c3e50;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .time-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 40px;
+            right: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 1000;
+        }
+        
+        .legend h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+            font-size: 14px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 10px;
+            border: 2px solid rgba(0,0,0,0.2);
+        }
+        
+        .tooltip {
+            position: absolute;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            pointer-events: none;
+            z-index: 2000;
+            max-width: 300px;
+            display: none;
+        }
+        
+        .tooltip h3 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+        
+        .tooltip p {
+            margin: 5px 0;
+            font-size: 13px;
+            color: #555;
+        }
+        
+        .tooltip .description {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .marker {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .marker:hover {
+            transform: scale(1.2);
+        }
+        
+        @media (max-width: 768px) {
+            .info-panel {
+                max-width: 250px;
+                padding: 15px;
+            }
+            
+            .info-panel h1 {
+                font-size: 18px;
+            }
+            
+            .time-control {
+                min-width: 300px;
+                padding: 20px 30px;
+            }
+            
+            .time-indicator {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="mapContainer">
+        <svg id="mapSVG" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet">
+            <!-- Map background will be drawn here -->
+        </svg>
+    </div>
+    
+    <div class="info-panel">
+        <h1>İstiklal Caddesi</h1>
+        <p>İstanbul'un kalbindeki bu ikonik cadde, sabah, öğlen ve akşam farklı karakterler sergiliyor.</p>
+        <p><strong>Kontroller:</strong> Aşağıdaki kaydırıcıyı kullanarak farklı zaman dilimlerini keşfedin.</p>
+        <div class="stats" id="stats">Yükleniyor...</div>
+    </div>
+    
+    <div class="time-control">
+        <div class="time-label">Zaman Seçin</div>
+        <div class="time-indicator" id="timeDisplay">Sabah</div>
+        <div class="slider-container">
+            <input type="range" min="0" max="2" value="0" step="1" id="timeSlider">
+            <div class="time-labels">
+                <span>Sabah</span>
+                <span>Öğlen</span>
+                <span>Akşam</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="legend">
+        <h3>Renk Göstergeleri</h3>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #EBED58;"></div>
+            <span>Sabah</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #DE9612;"></div>
+            <span>Öğlen</span>
+        </div>
+        <div class="legend-item">
+            <div class="legend-color" style="background-color: #3E87A3;"></div>
+            <span>Akşam</span>
+        </div>
+    </div>
+    
+    <div class="tooltip" id="tooltip"></div>
+    
+    <script>
+        // Configuration
+        const SVG_WIDTH = 1000;
+        const SVG_HEIGHT = 800;
+        
+        // Istanbul area bounds (approximate)
+        const LAT_MIN = 41.025;
+        const LAT_MAX = 41.042;
+        const LON_MIN = 28.970;
+        const LON_MAX = 28.992;
+        
+        // Data storage
+        let mapData = null;
+        let currentTimeIndex = 0;
+        
+        // Time period names
+        const timeNames = {
+            0: 'Sabah',
+            1: 'Öğlen',
+            2: 'Akşam'
+        };
+        
+        const timeKeys = {
+            0: 'morning',
+            1: 'noon',
+            2: 'night'
+        };
+        
+        // Convert lat/lon to SVG coordinates
+        function latLonToSVG(lat, lon) {
+            const x = ((lon - LON_MIN) / (LON_MAX - LON_MIN)) * SVG_WIDTH;
+            const y = ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN)) * SVG_HEIGHT;
+            return { x, y };
+        }
+        
+        // Initialize SVG map
+        const svg = document.getElementById('mapSVG');
+        const tooltip = document.getElementById('tooltip');
+        
+        // Create map background
+        function createMapBackground() {
+            // Add a grid pattern for the map
+            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+            const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
+            pattern.setAttribute('id', 'grid');
+            pattern.setAttribute('width', '50');
+            pattern.setAttribute('height', '50');
+            pattern.setAttribute('patternUnits', 'userSpaceOnUse');
+            
+            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('d', 'M 50 0 L 0 0 0 50');
+            path.setAttribute('fill', 'none');
+            path.setAttribute('stroke', 'rgba(255,255,255,0.1)');
+            path.setAttribute('stroke-width', '1');
+            
+            pattern.appendChild(path);
+            defs.appendChild(pattern);
+            svg.appendChild(defs);
+            
+            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            rect.setAttribute('width', SVG_WIDTH);
+            rect.setAttribute('height', SVG_HEIGHT);
+            rect.setAttribute('fill', 'url(#grid)');
+            svg.appendChild(rect);
+            
+            // Add main street line (approximate İstiklal Caddesi path)
+            const street = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+            street.setAttribute('x1', '200');
+            street.setAttribute('y1', '150');
+            street.setAttribute('x2', '800');
+            street.setAttribute('y2', '650');
+            street.setAttribute('stroke', 'rgba(255,255,255,0.3)');
+            street.setAttribute('stroke-width', '8');
+            street.setAttribute('stroke-linecap', 'round');
+            svg.appendChild(street);
+        }
+        
+        // Create marker on map
+        function createMarker(point, index) {
+            const pos = latLonToSVG(point.lat, point.lon);
+            
+            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('class', 'marker');
+            group.setAttribute('data-index', index);
+            
+            // Outer glow
+            const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            glow.setAttribute('cx', pos.x);
+            glow.setAttribute('cy', pos.y);
+            glow.setAttribute('r', '20');
+            glow.setAttribute('fill', point.color);
+            glow.setAttribute('opacity', '0.3');
+            group.appendChild(glow);
+            
+            // Main marker
+            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', pos.x);
+            circle.setAttribute('cy', pos.y);
+            circle.setAttribute('r', '12');
+            circle.setAttribute('fill', point.color);
+            circle.setAttribute('stroke', 'white');
+            circle.setAttribute('stroke-width', '3');
+            group.appendChild(circle);
+            
+            // Label
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.setAttribute('x', pos.x);
+            text.setAttribute('y', pos.y + 30);
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('font-size', '12');
+            text.setAttribute('font-weight', 'bold');
+            text.setAttribute('fill', 'white');
+            text.setAttribute('stroke', 'rgba(0,0,0,0.5)');
+            text.setAttribute('stroke-width', '0.5');
+            text.textContent = (index + 1).toString();
+            group.appendChild(text);
+            
+            // Add event listeners
+            group.addEventListener('mouseenter', (e) => showTooltip(e, point));
+            group.addEventListener('mousemove', (e) => moveTooltip(e));
+            group.addEventListener('mouseleave', hideTooltip);
+            
+            return group;
+        }
+        
+        // Show tooltip
+        function showTooltip(e, point) {
+            const content = `
+                <h3>${point.name}</h3>
+                <p><strong>Tür:</strong> ${point.type}</p>
+                <p><strong>Konum:</strong> ${point.city}, ${point.country}</p>
+                ${point.description ? `<div class="description">${point.description}</div>` : ''}
+            `;
+            tooltip.innerHTML = content;
+            tooltip.style.display = 'block';
+            moveTooltip(e);
+        }
+        
+        // Move tooltip
+        function moveTooltip(e) {
+            tooltip.style.left = (e.pageX + 15) + 'px';
+            tooltip.style.top = (e.pageY + 15) + 'px';
+        }
+        
+        // Hide tooltip
+        function hideTooltip() {
+            tooltip.style.display = 'none';
+        }
+        
+        // Update markers based on time selection
+        function updateMarkers(timeIndex) {
+            // Remove existing markers
+            const existingMarkers = svg.querySelectorAll('.marker');
+            existingMarkers.forEach(marker => marker.remove());
+            
+            if (!mapData) return;
+            
+            const timeKey = timeKeys[timeIndex];
+            const points = mapData[timeKey];
+            
+            if (!points || points.length === 0) {
+                console.warn(`No data found for ${timeKey}`);
+                return;
+            }
+            
+            // Add new markers
+            points.forEach((point, index) => {
+                const marker = createMarker(point, index);
+                svg.appendChild(marker);
+            });
+            
+            // Update stats
+            document.getElementById('stats').innerHTML = `
+                <strong>${timeNames[timeIndex]}:</strong> ${points.length} konum işaretlendi
+            `;
+        }
+        
+        // Load data from JSON file
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => {
+                mapData = data;
+                createMapBackground();
+                updateMarkers(0); // Show morning data by default
+            })
+            .catch(error => {
+                console.error('Error loading data:', error);
+                document.getElementById('stats').textContent = 
+                    'Veri yüklenirken bir hata oluştu. Lütfen data.json dosyasının mevcut olduğundan emin olun.';
+            });
+        
+        // Handle slider change
+        const slider = document.getElementById('timeSlider');
+        const timeDisplay = document.getElementById('timeDisplay');
+        
+        slider.addEventListener('input', function() {
+            const value = parseInt(this.value);
+            currentTimeIndex = value;
+            timeDisplay.textContent = timeNames[value];
+            updateMarkers(value);
+        });
+        
+        // Add simple pan functionality
+        let isPanning = false;
+        let startX, startY;
+        let currentViewBox = { x: 0, y: 0, width: SVG_WIDTH, height: SVG_HEIGHT };
+        
+        svg.addEventListener('mousedown', (e) => {
+            if (e.target.classList.contains('marker') || e.target.parentElement.classList.contains('marker')) return;
+            isPanning = true;
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+        
+        svg.addEventListener('mousemove', (e) => {
+            if (!isPanning) return;
+            const dx = (startX - e.clientX) * 2;
+            const dy = (startY - e.clientY) * 2;
+            currentViewBox.x += dx;
+            currentViewBox.y += dy;
+            svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.width} ${currentViewBox.height}`);
+            startX = e.clientX;
+            startY = e.clientY;
+        });
+        
+        svg.addEventListener('mouseup', () => {
+            isPanning = false;
+        });
+        
+        svg.addEventListener('mouseleave', () => {
+            isPanning = false;
+        });
+        
+        // Add zoom functionality with mouse wheel
+        svg.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 1.1 : 0.9;
+            currentViewBox.width *= delta;
+            currentViewBox.height *= delta;
+            svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.width} ${currentViewBox.height}`);
+        });
+    </script>
+</body>
+</html>
