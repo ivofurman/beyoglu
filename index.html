@@ -105,81 +105,126 @@
             border-bottom: 1px solid var(--outline);
         }
         
-        .time-label {
-            text-align: center;
-            font-size: 12px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-        
         .time-indicator {
-            font-size: 48px;
+            font-size: 36px;
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             color: #ffffff;
             font-weight: 600;
             letter-spacing: -0.01em;
             line-height: 1;
         }
         
-        .slider-container {
+        .clock-container {
             position: relative;
-            margin: 0 8px;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
         }
         
-        input[type="range"] {
+        .clock-face {
+            position: absolute;
             width: 100%;
-            height: 6px;
-            border-radius: 3px;
-            background: linear-gradient(to right, var(--morning), var(--noon), var(--night));
-            outline: none;
-            -webkit-appearance: none;
-            cursor: pointer;
-        }
-        
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
+            height: 100%;
+            border: 3px solid var(--outline);
             border-radius: 50%;
-            background: var(--text);
-            cursor: pointer;
-            box-shadow: 0 2px 8px var(--shadow), 0 0 0 4px rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            background: rgba(31, 41, 55, 0.3);
+            backdrop-filter: blur(10px);
         }
         
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px var(--shadow), 0 0 0 6px rgba(255, 255, 255, 0.15);
-        }
-        
-        input[type="range"]::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+        .clock-center {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--brand);
             border-radius: 50%;
-            background: var(--text);
-            cursor: pointer;
-            border: none;
-            box-shadow: 0 2px 8px var(--shadow), 0 0 0 4px rgba(255, 255, 255, 0.1);
-            transition: transform 0.2s, box-shadow 0.2s;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px rgba(127, 205, 187, 0.6);
+            z-index: 10;
         }
         
-        input[type="range"]::-moz-range-thumb:hover {
-            transform: scale(1.1);
-            box-shadow: 0 4px 12px var(--shadow), 0 0 0 6px rgba(255, 255, 255, 0.15);
-        }
-        
-        .time-labels {
+        .clock-option {
+            position: absolute;
+            width: 56px;
+            height: 56px;
             display: flex;
-            justify-content: space-between;
-            margin-top: 12px;
-            font-size: 11px;
-            color: var(--muted);
-            font-weight: 500;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            border-radius: 50%;
+            background: rgba(36, 36, 36, 0.8);
+            border: 2px solid var(--outline);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+        }
+        
+        .clock-option:hover {
+            transform: scale(1.15);
+            border-color: var(--brand-light);
+            box-shadow: 0 4px 16px rgba(127, 205, 187, 0.4);
+            background: rgba(127, 205, 187, 0.15);
+        }
+        
+        .clock-option.active {
+            background: var(--brand);
+            border-color: var(--brand);
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(127, 205, 187, 0.6);
+        }
+        
+        /* Position symbols on clock face */
+        .clock-option.morning {
+            /* 7 o'clock position: 210 degrees */
+            top: 69%;
+            left: 11%;
+        }
+        
+        .clock-option.noon {
+            /* 12 o'clock position: 0 degrees */
+            top: 2%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .clock-option.noon:hover,
+        .clock-option.noon.active {
+            transform: translateX(-50%) scale(1.2);
+        }
+        
+        .clock-option.night {
+            /* 5 o'clock position: 150 degrees */
+            top: 69%;
+            right: 11%;
+        }
+        
+        /* Clock hand pointing to active time */
+        .clock-hand {
+            position: absolute;
+            width: 3px;
+            height: 85px;
+            background: linear-gradient(to top, var(--brand), transparent);
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 4;
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .clock-hand.morning {
+            transform: translate(-50%, -100%) rotate(210deg);
+        }
+        
+        .clock-hand.noon {
+            transform: translate(-50%, -100%) rotate(0deg);
+        }
+        
+        .clock-hand.night {
+            transform: translate(-50%, -100%) rotate(150deg);
         }
         
         .list {
@@ -466,13 +511,13 @@
             
             <div class="time-control">
                 <div class="time-indicator" id="timeDisplay">🌅</div>
-                <div class="slider-container">
-                    <input type="range" min="0" max="2" value="0" step="1" id="timeSlider">
-                    <div class="time-labels">
-                        <span>🌅</span>
-                        <span>☀️</span>
-                        <span>🌙</span>
-                    </div>
+                <div class="clock-container">
+                    <div class="clock-face"></div>
+                    <div class="clock-hand morning" id="clockHand"></div>
+                    <div class="clock-center"></div>
+                    <div class="clock-option morning active" data-time="0" title="Sabah - 7:00">🌅</div>
+                    <div class="clock-option noon" data-time="1" title="Öğlen - 12:00">☀️</div>
+                    <div class="clock-option night" data-time="2" title="Akşam - 17:00">🌙</div>
                 </div>
             </div>
             
@@ -749,29 +794,46 @@
         // Initialize navigation UI after first markers are created
         setTimeout(() => updateNavigationUI(), 100);
         
-        // Handle slider change
-        const slider = document.getElementById('timeSlider');
+        // Handle clock option clicks
         const timeDisplay = document.getElementById('timeDisplay');
+        const clockHand = document.getElementById('clockHand');
+        const clockOptions = document.querySelectorAll('.clock-option');
         
-        slider.addEventListener('input', function() {
-            const value = parseInt(this.value);
-            currentTimeIndex = value;
-            timeDisplay.textContent = timeNames[value];
-            updateMarkers(value);
-            
-            // Reset pin index when changing time
-            currentPinIndex = 0;
-            updateNavigationUI();
-            
-            // Fit map to show all markers with smooth animation
-            if (markers.length > 0) {
-                const group = new L.featureGroup(markers);
-                map.flyToBounds(group.getBounds().pad(0.1), {
-                    animate: true,
-                    duration: 1.2,
-                    easeLinearity: 0.15
-                });
-            }
+        clockOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-time'));
+                currentTimeIndex = value;
+                
+                // Update display
+                timeDisplay.textContent = timeNames[value];
+                
+                // Update active state
+                clockOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update clock hand rotation
+                clockHand.className = 'clock-hand';
+                if (value === 0) clockHand.classList.add('morning');
+                else if (value === 1) clockHand.classList.add('noon');
+                else if (value === 2) clockHand.classList.add('night');
+                
+                // Update markers
+                updateMarkers(value);
+                
+                // Reset pin index when changing time
+                currentPinIndex = 0;
+                updateNavigationUI();
+                
+                // Fit map to show all markers with smooth animation
+                if (markers.length > 0) {
+                    const group = new L.featureGroup(markers);
+                    map.flyToBounds(group.getBounds().pad(0.1), {
+                        animate: true,
+                        duration: 1.2,
+                        easeLinearity: 0.15
+                    });
+                }
+            });
         });
         
         // Navigation functions
