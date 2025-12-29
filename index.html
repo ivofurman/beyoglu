@@ -836,8 +836,9 @@
         if (homeBtn) {
             homeBtn.addEventListener('click', () => {
                 // Reset to initial view showing all markers
-                if (currentMarkerGroup) {
-                    map.flyToBounds(currentMarkerGroup.getBounds().pad(0.1), {
+                if (markers && markers.length > 0) {
+                    const group = L.featureGroup(markers);
+                    map.flyToBounds(group.getBounds().pad(0.1), {
                         animate: true,
                         duration: 1.5,
                         easeLinearity: 0.15
