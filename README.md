@@ -5,6 +5,7 @@ An interactive visualization of İstiklal Street and its surroundings in Istanbu
 ## Features
 
 - **Interactive Leaflet Map**: Real OpenStreetMap tiles with full pan and zoom
+- **Bounded Area**: Map restricted to İstiklal Caddesi and surrounding area (Taksim to Galata)
 - **Sidebar with Location Cards**: Click cards to fly to locations on the map
 - **Time Slider**: Switch between three time periods:
   - **Sabah (Morning)**: Yellow markers - quieter atmosphere with preparation activities

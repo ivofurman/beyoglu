@@ -17,18 +17,22 @@
     
     <style>
         :root {
-            --bg: #161920;
-            --panel: #232635;
-            --text: #f2efe9;
-            --muted: #a3adc4;
-            --brand: #e96e36;
-            --highlight: #39b7b1;
-            --outline: #403b3b;
-            --accent: #ffbe7b;
-            --morning: #EBED58;
-            --noon: #DE9612;
-            --night: #3E87A3;
+            --bg: #0a0e27;
+            --panel: #141829;
+            --text: #e8eaed;
+            --muted: #9aa0a6;
+            --brand: #4f46e5;
+            --brand-light: #6366f1;
+            --highlight: #10b981;
+            --outline: #1f2937;
+            --accent: #f59e0b;
+            --morning: #fbbf24;
+            --noon: #f97316;
+            --night: #06b6d4;
+            --shadow: rgba(0, 0, 0, 0.3);
         }
+        
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
         
         * {
             margin: 0;
@@ -41,22 +45,26 @@
             margin: 0;
             background: var(--bg);
             color: var(--text);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            font-weight: 400;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         .wrap {
             display: grid;
-            grid-template-columns: 340px 1fr;
+            grid-template-columns: 360px 1fr;
             height: 100vh;
             background: var(--bg);
         }
         
         #sidebar {
             background: var(--panel);
-            border-right: 2px solid var(--outline);
+            border-right: 1px solid var(--outline);
             overflow: auto;
             display: flex;
             flex-direction: column;
+            backdrop-filter: blur(10px);
         }
         
         #map {
@@ -65,212 +73,283 @@
         }
         
         .brand {
-            padding: 18px 18px 10px;
-            border-bottom: 2px solid var(--outline);
-            background: var(--panel);
+            padding: 32px 24px 20px;
+            border-bottom: 1px solid var(--outline);
+            background: linear-gradient(180deg, var(--panel) 0%, rgba(20, 24, 41, 0.5) 100%);
         }
         
         .brand h1 {
-            font-size: 22px;
-            margin: 0 0 7px;
-            color: var(--brand);
+            font-size: 26px;
+            margin: 0 0 8px;
+            color: var(--text);
             font-weight: 700;
-            letter-spacing: 0.03em;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
         }
         
         .brand p {
             margin: 0;
-            font-size: 13px;
+            font-size: 14px;
             color: var(--muted);
             font-weight: 400;
+            line-height: 1.5;
         }
         
         .time-control {
-            padding: 20px 18px;
+            padding: 24px;
             background: var(--panel);
-            border-bottom: 2px solid var(--outline);
+            border-bottom: 1px solid var(--outline);
         }
         
         .time-label {
             text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            color: var(--text);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .time-indicator {
-            font-size: 24px;
+            font-size: 32px;
             text-align: center;
-            margin-bottom: 15px;
-            color: var(--accent);
+            margin-bottom: 20px;
+            color: var(--text);
+            font-weight: 700;
+            letter-spacing: -0.02em;
         }
         
         .slider-container {
             position: relative;
-            margin: 0 10px;
+            margin: 0 8px;
         }
         
         input[type="range"] {
             width: 100%;
-            height: 8px;
-            border-radius: 5px;
+            height: 6px;
+            border-radius: 3px;
             background: linear-gradient(to right, var(--morning), var(--noon), var(--night));
             outline: none;
             -webkit-appearance: none;
+            cursor: pointer;
         }
         
         input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--text);
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px var(--shadow), 0 0 0 4px rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px var(--shadow), 0 0 0 6px rgba(255, 255, 255, 0.15);
         }
         
         input[type="range"]::-moz-range-thumb {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             background: var(--text);
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            box-shadow: 0 2px 8px var(--shadow), 0 0 0 4px rgba(255, 255, 255, 0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        input[type="range"]::-moz-range-thumb:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px var(--shadow), 0 0 0 6px rgba(255, 255, 255, 0.15);
         }
         
         .time-labels {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
-            font-size: 12px;
+            margin-top: 12px;
+            font-size: 11px;
             color: var(--muted);
+            font-weight: 500;
         }
         
         .list {
-            padding: 10px 10px 24px;
+            padding: 16px;
             overflow-y: auto;
             flex: 1;
         }
         
         .card {
-            background: var(--panel);
-            border: 2px solid var(--outline);
-            border-radius: 14px;
-            padding: 13px;
-            margin: 12px 8px;
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 0 0 12px 0;
             cursor: pointer;
-            transition: transform 0.15s, background 0.15s, box-shadow 0.2s;
-            box-shadow: 0 4px 16px rgba(24,26,33,0.2);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
         }
         
-        .card:hover, .card.active {
-            background: #24293a;
-            transform: translateY(-1px) scale(1.017);
-            box-shadow: 0 8px 20px rgba(233,110,54,0.23);
+        .card:hover {
+            background: rgba(79, 70, 229, 0.1);
+            border-color: var(--brand-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+        }
+        
+        .card.active {
+            background: rgba(79, 70, 229, 0.15);
             border-color: var(--brand);
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.3);
         }
         
         .card .title {
-            font-weight: 700;
-            font-size: 15.5px;
-            margin-bottom: 3px;
-            color: var(--brand);
-            letter-spacing: 0.02em;
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: var(--text);
+            letter-spacing: -0.01em;
+            line-height: 1.4;
         }
         
         .card .meta {
             color: var(--muted);
-            font-size: 12.5px;
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
         }
         
         .legend {
             position: absolute;
             z-index: 500;
-            right: 16px;
-            top: 16px;
-            background: rgba(35,38,53,0.97);
-            border-radius: 14px;
-            padding: 10px 16px;
+            right: 20px;
+            top: 20px;
+            background: rgba(20, 24, 41, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 16px 20px;
             color: var(--text);
             font-size: 13px;
-            border: 2px solid var(--outline);
-            box-shadow: 0 4px 16px rgba(24,26,33,0.2);
+            border: 1px solid var(--outline);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
         
         .legend h3 {
-            font-size: 14px;
-            margin-bottom: 8px;
-            color: var(--brand);
+            font-size: 12px;
+            margin-bottom: 12px;
+            color: var(--text);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .legend-item {
             display: flex;
             align-items: center;
-            margin: 5px 0;
-            font-size: 12px;
+            margin: 8px 0;
+            font-size: 13px;
+            font-weight: 500;
         }
         
         .legend-color {
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             border-radius: 50%;
-            margin-right: 8px;
-            border: 2px solid var(--outline);
+            margin-right: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         
         /* Leaflet popup customization */
         .leaflet-popup-content-wrapper {
-            background: #1d2331 !important;
+            background: rgba(20, 24, 41, 0.98) !important;
+            backdrop-filter: blur(20px);
             color: var(--text) !important;
-            border-radius: 14px !important;
-            border: 2px solid var(--highlight) !important;
-            box-shadow: 0 6px 24px rgba(24,26,33,0.4);
+            border-radius: 16px !important;
+            border: 1px solid var(--outline) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+            padding: 4px !important;
         }
         
         .leaflet-popup-content {
-            margin: 12px;
+            margin: 16px !important;
             color: var(--text) !important;
+            font-family: 'Inter', sans-serif !important;
         }
         
         .leaflet-popup-tip {
-            background: #1d2331 !important;
-            border: 2px solid var(--highlight) !important;
+            background: rgba(20, 24, 41, 0.98) !important;
+            border: 1px solid var(--outline) !important;
+            backdrop-filter: blur(20px);
         }
         
         .popup-title {
-            margin: 0 0 8px 0;
-            font-size: 16px;
+            margin: 0 0 12px 0;
+            font-size: 17px;
             font-weight: 700;
-            color: var(--brand);
+            color: var(--text);
+            letter-spacing: -0.01em;
+            line-height: 1.3;
         }
         
         .popup-type {
-            margin: 5px 0;
+            margin: 8px 0;
             font-size: 13px;
-            color: var(--accent);
+            color: var(--brand-light);
+            font-weight: 500;
         }
         
         .popup-location {
-            margin: 5px 0;
+            margin: 8px 0;
             font-size: 12px;
             color: var(--muted);
+            font-weight: 400;
         }
         
         .popup-description {
-            margin-top: 10px;
-            padding-top: 10px;
+            margin-top: 12px;
+            padding-top: 12px;
             border-top: 1px solid var(--outline);
             font-size: 13px;
-            font-style: italic;
+            font-style: normal;
             color: var(--text);
-            line-height: 1.4;
+            line-height: 1.6;
+            font-weight: 400;
         }
         
         .leaflet-popup-close-button {
-            color: var(--accent) !important;
+            color: var(--muted) !important;
+            font-size: 20px !important;
+            font-weight: 600 !important;
+        }
+        
+        .leaflet-popup-close-button:hover {
+            color: var(--text) !important;
+        }
+        
+        /* Scrollbar styling */
+        #sidebar::-webkit-scrollbar,
+        .list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #sidebar::-webkit-scrollbar-track,
+        .list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        #sidebar::-webkit-scrollbar-thumb,
+        .list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        #sidebar::-webkit-scrollbar-thumb:hover,
+        .list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
         }
         
         @media (max-width: 900px) {
@@ -279,9 +358,16 @@
             }
             #sidebar {
                 height: 42%;
+                border-right: none;
+                border-bottom: 1px solid var(--outline);
             }
             #map {
                 height: 58%;
+            }
+            .legend {
+                right: 12px;
+                top: 12px;
+                padding: 12px 16px;
             }
         }
     </style>
@@ -316,15 +402,15 @@
     <div class="legend">
         <h3>Renk Göstergeleri</h3>
         <div class="legend-item">
-            <div class="legend-color" style="background-color: #EBED58;"></div>
+            <div class="legend-color" style="background-color: #fbbf24;"></div>
             <span>Sabah</span>
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background-color: #DE9612;"></div>
+            <div class="legend-color" style="background-color: #f97316;"></div>
             <span>Öğlen</span>
         </div>
         <div class="legend-item">
-            <div class="legend-color" style="background-color: #3E87A3;"></div>
+            <div class="legend-color" style="background-color: #06b6d4;"></div>
             <span>Akşam</span>
         </div>
     </div>
@@ -336,13 +422,34 @@
             throw new Error('Leaflet library not loaded');
         }
         
-        // Initialize the map
-        const map = L.map('map').setView([41.0343, 28.9784], 14);
+        // Initialize the map with options
+        const map = L.map('map', {
+            center: [41.0343, 28.9784],
+            zoom: 14,
+            minZoom: 13,
+            maxZoom: 18
+        });
+        
+        // Define boundaries around İstiklal Caddesi area
+        // These bounds cover from Taksim to Galata area
+        const bounds = L.latLngBounds(
+            [41.023, 28.970],  // Southwest corner
+            [41.040, 28.990]   // Northeast corner
+        );
+        
+        // Set max bounds to restrict panning
+        map.setMaxBounds(bounds);
+        
+        // Bounce back if user tries to pan outside
+        map.on('drag', function() {
+            map.panInsideBounds(bounds, { animate: false });
+        });
         
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-            maxZoom: 19
+            maxZoom: 19,
+            bounds: bounds
         }).addTo(map);
         
         // Data storage
@@ -367,9 +474,9 @@
         };
         
         const timeColors = {
-            0: '#EBED58',
-            1: '#DE9612',
-            2: '#3E87A3'
+            0: '#fbbf24',
+            1: '#f97316',
+            2: '#06b6d4'
         };
         
         // Escape HTML to prevent XSS
