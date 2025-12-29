@@ -922,15 +922,8 @@
                 currentPinIndex = 0;
                 updateNavigationUI();
                 
-                // Fit map to show all markers with smooth animation
-                if (markers.length > 0) {
-                    const group = new L.featureGroup(markers);
-                    map.flyToBounds(group.getBounds().pad(0.1), {
-                        animate: true,
-                        duration: 1.2,
-                        easeLinearity: 0.15
-                    });
-                }
+                // Don't recenter map - allow user to stay focused on their current view
+                // This lets users see how popup content changes across time periods
             });
         });
         
