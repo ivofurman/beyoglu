@@ -402,13 +402,20 @@
             return group;
         }
         
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
         // Show tooltip
         function showTooltip(e, point) {
             const content = `
-                <h3>${point.name}</h3>
-                <p><strong>Tür:</strong> ${point.type}</p>
-                <p><strong>Konum:</strong> ${point.city}, ${point.country}</p>
-                ${point.description ? `<div class="description">${point.description}</div>` : ''}
+                <h3>${escapeHtml(point.name)}</h3>
+                <p><strong>Tür:</strong> ${escapeHtml(point.type)}</p>
+                <p><strong>Konum:</strong> ${escapeHtml(point.city)}, ${escapeHtml(point.country)}</p>
+                ${point.description ? `<div class="description">${escapeHtml(point.description)}</div>` : ''}
             `;
             tooltip.innerHTML = content;
             tooltip.style.display = 'block';
@@ -449,9 +456,12 @@
             });
             
             // Update stats
-            document.getElementById('stats').innerHTML = `
-                <strong>${timeNames[timeIndex]}:</strong> ${points.length} konum işaretlendi
-            `;
+            const statsElement = document.getElementById('stats');
+            statsElement.innerHTML = '';
+            const strong = document.createElement('strong');
+            strong.textContent = timeNames[timeIndex] + ':';
+            statsElement.appendChild(strong);
+            statsElement.appendChild(document.createTextNode(` ${points.length} konum işaretlendi`));
         }
         
         // Load data from JSON file
