@@ -5,94 +5,105 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>İstiklal Caddesi - Interactive Time Map</title>
     
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
     <style>
+        :root {
+            --bg: #161920;
+            --panel: #232635;
+            --text: #f2efe9;
+            --muted: #a3adc4;
+            --brand: #e96e36;
+            --highlight: #39b7b1;
+            --outline: #403b3b;
+            --accent: #ffbe7b;
+            --morning: #EBED58;
+            --noon: #DE9612;
+            --night: #3E87A3;
+        }
+        
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
         
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            overflow: hidden;
-        }
-        
-        #mapContainer {
-            width: 100%;
-            height: 100vh;
-            position: relative;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        }
-        
-        #mapSVG {
-            width: 100%;
+        html, body {
             height: 100%;
-            cursor: grab;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
-        #mapSVG:active {
-            cursor: grabbing;
+        .wrap {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            height: 100vh;
+            background: var(--bg);
         }
         
-        .info-panel {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
-            max-width: 350px;
+        #sidebar {
+            background: var(--panel);
+            border-right: 2px solid var(--outline);
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
         }
         
-        .info-panel h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-            color: #333;
+        #map {
+            height: 100vh;
+            width: 100%;
         }
         
-        .info-panel p {
-            font-size: 14px;
-            color: #666;
-            margin-bottom: 10px;
+        .brand {
+            padding: 18px 18px 10px;
+            border-bottom: 2px solid var(--outline);
+            background: var(--panel);
         }
         
-        .stats {
-            font-size: 12px;
-            color: #888;
-            margin-top: 10px;
-            padding-top: 10px;
-            border-top: 1px solid #eee;
+        .brand h1 {
+            font-size: 22px;
+            margin: 0 0 7px;
+            color: var(--brand);
+            font-weight: 700;
+            letter-spacing: 0.03em;
+        }
+        
+        .brand p {
+            margin: 0;
+            font-size: 13px;
+            color: var(--muted);
+            font-weight: 400;
         }
         
         .time-control {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: white;
-            padding: 25px 40px;
-            border-radius: 15px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 1000;
-            min-width: 400px;
+            padding: 20px 18px;
+            background: var(--panel);
+            border-bottom: 2px solid var(--outline);
         }
         
         .time-label {
             text-align: center;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: bold;
-            margin-bottom: 15px;
-            color: #333;
+            margin-bottom: 10px;
+            color: var(--text);
         }
         
         .time-indicator {
-            font-size: 28px;
+            font-size: 24px;
             text-align: center;
-            margin-bottom: 20px;
-            color: #2c3e50;
+            margin-bottom: 15px;
+            color: var(--accent);
         }
         
         .slider-container {
@@ -104,7 +115,7 @@
             width: 100%;
             height: 8px;
             border-radius: 5px;
-            background: linear-gradient(to right, #EBED58, #DE9612, #3E87A3);
+            background: linear-gradient(to right, var(--morning), var(--noon), var(--night));
             outline: none;
             -webkit-appearance: none;
         }
@@ -115,148 +126,191 @@
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: #2c3e50;
+            background: var(--text);
             cursor: pointer;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         input[type="range"]::-moz-range-thumb {
             width: 24px;
             height: 24px;
             border-radius: 50%;
-            background: #2c3e50;
+            background: var(--text);
             cursor: pointer;
             border: none;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .time-labels {
             display: flex;
             justify-content: space-between;
             margin-top: 10px;
-            font-size: 14px;
-            color: #666;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .list {
+            padding: 10px 10px 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .card {
+            background: var(--panel);
+            border: 2px solid var(--outline);
+            border-radius: 14px;
+            padding: 13px;
+            margin: 12px 8px;
+            cursor: pointer;
+            transition: transform 0.15s, background 0.15s, box-shadow 0.2s;
+            box-shadow: 0 4px 16px rgba(24,26,33,0.2);
+        }
+        
+        .card:hover, .card.active {
+            background: #24293a;
+            transform: translateY(-1px) scale(1.017);
+            box-shadow: 0 8px 20px rgba(233,110,54,0.23);
+            border-color: var(--brand);
+        }
+        
+        .card .title {
+            font-weight: 700;
+            font-size: 15.5px;
+            margin-bottom: 3px;
+            color: var(--brand);
+            letter-spacing: 0.02em;
+        }
+        
+        .card .meta {
+            color: var(--muted);
+            font-size: 12.5px;
         }
         
         .legend {
             position: absolute;
-            bottom: 40px;
-            right: 20px;
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 1000;
+            z-index: 500;
+            right: 16px;
+            top: 16px;
+            background: rgba(35,38,53,0.97);
+            border-radius: 14px;
+            padding: 10px 16px;
+            color: var(--text);
+            font-size: 13px;
+            border: 2px solid var(--outline);
+            box-shadow: 0 4px 16px rgba(24,26,33,0.2);
         }
         
         .legend h3 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            color: #333;
+            font-size: 14px;
+            margin-bottom: 8px;
+            color: var(--brand);
         }
         
         .legend-item {
             display: flex;
             align-items: center;
             margin: 5px 0;
-            font-size: 14px;
+            font-size: 12px;
         }
         
         .legend-color {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             border-radius: 50%;
-            margin-right: 10px;
-            border: 2px solid rgba(0,0,0,0.2);
+            margin-right: 8px;
+            border: 2px solid var(--outline);
         }
         
-        .tooltip {
-            position: absolute;
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-            pointer-events: none;
-            z-index: 2000;
-            max-width: 300px;
-            display: none;
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            background: #1d2331 !important;
+            color: var(--text) !important;
+            border-radius: 14px !important;
+            border: 2px solid var(--highlight) !important;
+            box-shadow: 0 6px 24px rgba(24,26,33,0.4);
         }
         
-        .tooltip h3 {
-            margin: 0 0 10px 0;
-            color: #2c3e50;
+        .leaflet-popup-content {
+            margin: 12px;
+            color: var(--text) !important;
+        }
+        
+        .leaflet-popup-tip {
+            background: #1d2331 !important;
+            border: 2px solid var(--highlight) !important;
+        }
+        
+        .popup-title {
+            margin: 0 0 8px 0;
             font-size: 16px;
+            font-weight: 700;
+            color: var(--brand);
         }
         
-        .tooltip p {
+        .popup-type {
             margin: 5px 0;
             font-size: 13px;
-            color: #555;
+            color: var(--accent);
         }
         
-        .tooltip .description {
+        .popup-location {
+            margin: 5px 0;
+            font-size: 12px;
+            color: var(--muted);
+        }
+        
+        .popup-description {
             margin-top: 10px;
             padding-top: 10px;
-            border-top: 1px solid #eee;
+            border-top: 1px solid var(--outline);
+            font-size: 13px;
             font-style: italic;
-            color: #666;
+            color: var(--text);
+            line-height: 1.4;
         }
         
-        .marker {
-            cursor: pointer;
-            transition: all 0.2s;
+        .leaflet-popup-close-button {
+            color: var(--accent) !important;
         }
         
-        .marker:hover {
-            transform: scale(1.2);
-        }
-        
-        @media (max-width: 768px) {
-            .info-panel {
-                max-width: 250px;
-                padding: 15px;
+        @media (max-width: 900px) {
+            .wrap {
+                grid-template-columns: 1fr;
             }
-            
-            .info-panel h1 {
-                font-size: 18px;
+            #sidebar {
+                height: 42%;
             }
-            
-            .time-control {
-                min-width: 300px;
-                padding: 20px 30px;
-            }
-            
-            .time-indicator {
-                font-size: 22px;
+            #map {
+                height: 58%;
             }
         }
     </style>
 </head>
 <body>
-    <div id="mapContainer">
-        <svg id="mapSVG" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid meet">
-            <!-- Map background will be drawn here -->
-        </svg>
-    </div>
-    
-    <div class="info-panel">
-        <h1>İstiklal Caddesi</h1>
-        <p>İstanbul'un kalbindeki bu ikonik cadde, sabah, öğlen ve akşam farklı karakterler sergiliyor.</p>
-        <p><strong>Kontroller:</strong> Aşağıdaki kaydırıcıyı kullanarak farklı zaman dilimlerini keşfedin.</p>
-        <div class="stats" id="stats">Yükleniyor...</div>
-    </div>
-    
-    <div class="time-control">
-        <div class="time-label">Zaman Seçin</div>
-        <div class="time-indicator" id="timeDisplay">Sabah</div>
-        <div class="slider-container">
-            <input type="range" min="0" max="2" value="0" step="1" id="timeSlider">
-            <div class="time-labels">
-                <span>Sabah</span>
-                <span>Öğlen</span>
-                <span>Akşam</span>
+    <div class="wrap">
+        <aside id="sidebar">
+            <div class="brand">
+                <h1>İstiklal Caddesi</h1>
+                <p>Sabah, öğlen ve akşam farklı karakterler sergiliyor.</p>
             </div>
-        </div>
+            
+            <div class="time-control">
+                <div class="time-label">Zaman Seçin</div>
+                <div class="time-indicator" id="timeDisplay">Sabah</div>
+                <div class="slider-container">
+                    <input type="range" min="0" max="2" value="0" step="1" id="timeSlider">
+                    <div class="time-labels">
+                        <span>Sabah</span>
+                        <span>Öğlen</span>
+                        <span>Akşam</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="list" id="locationList"></div>
+        </aside>
+        
+        <main id="map"></main>
     </div>
     
     <div class="legend">
@@ -275,21 +329,19 @@
         </div>
     </div>
     
-    <div class="tooltip" id="tooltip"></div>
-    
     <script>
-        // Configuration
-        const SVG_WIDTH = 1000;
-        const SVG_HEIGHT = 800;
+        // Initialize the map
+        const map = L.map('map').setView([41.0343, 28.9784], 14);
         
-        // Istanbul area bounds (approximate)
-        const LAT_MIN = 41.025;
-        const LAT_MAX = 41.042;
-        const LON_MIN = 28.970;
-        const LON_MAX = 28.992;
+        // Add OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+            maxZoom: 19
+        }).addTo(map);
         
         // Data storage
         let mapData = null;
+        let markers = [];
         let currentTimeIndex = 0;
         
         // Time period names
@@ -305,113 +357,11 @@
             2: 'night'
         };
         
-        // Convert lat/lon to SVG coordinates
-        function latLonToSVG(lat, lon) {
-            // Validate inputs
-            if (typeof lat !== 'number' || typeof lon !== 'number' || isNaN(lat) || isNaN(lon)) {
-                console.warn('Invalid coordinates:', lat, lon);
-                return { x: SVG_WIDTH / 2, y: SVG_HEIGHT / 2 }; // Return center as fallback
-            }
-            
-            const x = ((lon - LON_MIN) / (LON_MAX - LON_MIN)) * SVG_WIDTH;
-            const y = ((LAT_MAX - lat) / (LAT_MAX - LAT_MIN)) * SVG_HEIGHT;
-            
-            // Clamp to valid range
-            return { 
-                x: Math.max(0, Math.min(SVG_WIDTH, x)), 
-                y: Math.max(0, Math.min(SVG_HEIGHT, y))
-            };
-        }
-        
-        // Initialize SVG map
-        const svg = document.getElementById('mapSVG');
-        const tooltip = document.getElementById('tooltip');
-        
-        // Create map background
-        function createMapBackground() {
-            // Add a grid pattern for the map
-            const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-            const pattern = document.createElementNS('http://www.w3.org/2000/svg', 'pattern');
-            pattern.setAttribute('id', 'grid');
-            pattern.setAttribute('width', '50');
-            pattern.setAttribute('height', '50');
-            pattern.setAttribute('patternUnits', 'userSpaceOnUse');
-            
-            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            path.setAttribute('d', 'M 50 0 L 0 0 0 50');
-            path.setAttribute('fill', 'none');
-            path.setAttribute('stroke', 'rgba(255,255,255,0.1)');
-            path.setAttribute('stroke-width', '1');
-            
-            pattern.appendChild(path);
-            defs.appendChild(pattern);
-            svg.appendChild(defs);
-            
-            const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-            rect.setAttribute('width', SVG_WIDTH);
-            rect.setAttribute('height', SVG_HEIGHT);
-            rect.setAttribute('fill', 'url(#grid)');
-            svg.appendChild(rect);
-            
-            // Add main street line (approximate İstiklal Caddesi path)
-            const street = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-            street.setAttribute('x1', '200');
-            street.setAttribute('y1', '150');
-            street.setAttribute('x2', '800');
-            street.setAttribute('y2', '650');
-            street.setAttribute('stroke', 'rgba(255,255,255,0.3)');
-            street.setAttribute('stroke-width', '8');
-            street.setAttribute('stroke-linecap', 'round');
-            svg.appendChild(street);
-        }
-        
-        // Create marker on map
-        function createMarker(point, index) {
-            const pos = latLonToSVG(point.lat, point.lon);
-            
-            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            group.setAttribute('class', 'marker');
-            group.setAttribute('data-index', index);
-            
-            // Outer glow
-            const glow = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            glow.setAttribute('cx', pos.x);
-            glow.setAttribute('cy', pos.y);
-            glow.setAttribute('r', '20');
-            glow.setAttribute('fill', point.color);
-            glow.setAttribute('opacity', '0.3');
-            group.appendChild(glow);
-            
-            // Main marker
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', pos.x);
-            circle.setAttribute('cy', pos.y);
-            circle.setAttribute('r', '12');
-            circle.setAttribute('fill', point.color);
-            circle.setAttribute('stroke', 'white');
-            circle.setAttribute('stroke-width', '3');
-            group.appendChild(circle);
-            
-            // Label
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', pos.x);
-            text.setAttribute('y', pos.y + 30);
-            text.setAttribute('text-anchor', 'middle');
-            text.setAttribute('font-size', '12');
-            text.setAttribute('font-weight', 'bold');
-            text.setAttribute('fill', 'white');
-            text.setAttribute('stroke', 'rgba(0,0,0,0.5)');
-            text.setAttribute('stroke-width', '0.5');
-            text.textContent = (index + 1).toString();
-            group.appendChild(text);
-            
-            // Add event listeners
-            group.addEventListener('mouseenter', (e) => showTooltip(e, point));
-            group.addEventListener('mousemove', (e) => moveTooltip(e));
-            group.addEventListener('mouseleave', hideTooltip);
-            
-            return group;
-        }
+        const timeColors = {
+            0: '#EBED58',
+            1: '#DE9612',
+            2: '#3E87A3'
+        };
         
         // Escape HTML to prevent XSS
         function escapeHtml(text) {
@@ -421,39 +371,34 @@
             return div.innerHTML;
         }
         
-        // Show tooltip
-        function showTooltip(e, point) {
-            const content = `
-                <h3>${escapeHtml(point.name)}</h3>
-                <p><strong>Tür:</strong> ${escapeHtml(point.type)}</p>
-                <p><strong>Konum:</strong> ${escapeHtml(point.city)}, ${escapeHtml(point.country)}</p>
-                ${point.description ? `<div class="description">${escapeHtml(point.description)}</div>` : ''}
-            `;
-            tooltip.innerHTML = content;
-            tooltip.style.display = 'block';
-            moveTooltip(e);
-        }
-        
-        // Move tooltip
-        function moveTooltip(e) {
-            tooltip.style.left = (e.pageX + 15) + 'px';
-            tooltip.style.top = (e.pageY + 15) + 'px';
-        }
-        
-        // Hide tooltip
-        function hideTooltip() {
-            tooltip.style.display = 'none';
+        // Create custom marker icon
+        function createMarkerIcon(color) {
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    background-color: ${color};
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    border: 3px solid white;
+                    box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                "></div>`,
+                iconSize: [30, 30],
+                iconAnchor: [15, 15],
+                popupAnchor: [0, -15]
+            });
         }
         
         // Update markers based on time selection
         function updateMarkers(timeIndex) {
             // Remove existing markers
-            const existingMarkers = svg.querySelectorAll('.marker');
-            existingMarkers.forEach(marker => marker.remove());
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
             
             if (!mapData) return;
             
             const timeKey = timeKeys[timeIndex];
+            const color = timeColors[timeIndex];
             const points = mapData[timeKey];
             
             if (!points || points.length === 0) {
@@ -463,17 +408,65 @@
             
             // Add new markers
             points.forEach((point, index) => {
-                const marker = createMarker(point, index);
-                svg.appendChild(marker);
+                const marker = L.marker([point.lat, point.lon], {
+                    icon: createMarkerIcon(color)
+                });
+                
+                // Create popup content
+                const popupContent = `
+                    <div>
+                        <h3 class="popup-title">${escapeHtml(point.name)}</h3>
+                        <div class="popup-type"><strong>Tür:</strong> ${escapeHtml(point.type)}</div>
+                        <div class="popup-location"><strong>Konum:</strong> ${escapeHtml(point.city)}, ${escapeHtml(point.country)}</div>
+                        ${point.description ? `<div class="popup-description">${escapeHtml(point.description)}</div>` : ''}
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent);
+                marker.addTo(map);
+                markers.push(marker);
+                
+                // Store reference for card click
+                marker._pointData = point;
+                marker._pointIndex = index;
             });
             
-            // Update stats
-            const statsElement = document.getElementById('stats');
-            statsElement.innerHTML = '';
-            const strong = document.createElement('strong');
-            strong.textContent = timeNames[timeIndex] + ':';
-            statsElement.appendChild(strong);
-            statsElement.appendChild(document.createTextNode(` ${points.length} konum işaretlendi`));
+            // Update location list
+            updateLocationList(points, timeIndex);
+        }
+        
+        // Update location list in sidebar
+        function updateLocationList(points, timeIndex) {
+            const list = document.getElementById('locationList');
+            list.innerHTML = '';
+            
+            points.forEach((point, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const title = document.createElement('div');
+                title.className = 'title';
+                title.textContent = `${index + 1}. ${point.name}`;
+                
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                meta.textContent = point.type;
+                
+                card.appendChild(title);
+                card.appendChild(meta);
+                
+                // Click to fly to marker
+                card.onclick = () => {
+                    map.setView([point.lat, point.lon], 16, { animate: true, duration: 0.6 });
+                    markers[index].openPopup();
+                    
+                    // Highlight active card
+                    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                };
+                
+                list.appendChild(card);
+            });
         }
         
         // Load data from JSON file
@@ -481,13 +474,17 @@
             .then(response => response.json())
             .then(data => {
                 mapData = data;
-                createMapBackground();
                 updateMarkers(0); // Show morning data by default
+                
+                // Fit map to show all markers
+                if (markers.length > 0) {
+                    const group = new L.featureGroup(markers);
+                    map.fitBounds(group.getBounds().pad(0.1));
+                }
             })
             .catch(error => {
                 console.error('Error loading data:', error);
-                document.getElementById('stats').textContent = 
-                    'Veri yüklenirken bir hata oluştu. Lütfen data.json dosyasının mevcut olduğundan emin olun.';
+                alert('Veri yüklenirken bir hata oluştu. Lütfen data.json dosyasının mevcut olduğundan emin olun.');
             });
         
         // Handle slider change
@@ -499,54 +496,11 @@
             currentTimeIndex = value;
             timeDisplay.textContent = timeNames[value];
             updateMarkers(value);
-        });
-        
-        // Add simple pan functionality
-        let isPanning = false;
-        let startX, startY;
-        let currentViewBox = { x: 0, y: 0, width: SVG_WIDTH, height: SVG_HEIGHT };
-        
-        svg.addEventListener('mousedown', (e) => {
-            if (e.target.classList.contains('marker') || e.target.parentElement.classList.contains('marker')) return;
-            isPanning = true;
-            startX = e.clientX;
-            startY = e.clientY;
-        });
-        
-        svg.addEventListener('mousemove', (e) => {
-            if (!isPanning) return;
-            const dx = (startX - e.clientX) * 2;
-            const dy = (startY - e.clientY) * 2;
-            currentViewBox.x += dx;
-            currentViewBox.y += dy;
-            svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.width} ${currentViewBox.height}`);
-            startX = e.clientX;
-            startY = e.clientY;
-        });
-        
-        svg.addEventListener('mouseup', () => {
-            isPanning = false;
-        });
-        
-        svg.addEventListener('mouseleave', () => {
-            isPanning = false;
-        });
-        
-        // Add zoom functionality with mouse wheel
-        svg.addEventListener('wheel', (e) => {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? 1.1 : 0.9;
-            const newWidth = currentViewBox.width * delta;
-            const newHeight = currentViewBox.height * delta;
             
-            // Limit zoom: min 50% of original, max 500% of original
-            const minWidth = SVG_WIDTH * 0.5;
-            const maxWidth = SVG_WIDTH * 5;
-            
-            if (newWidth >= minWidth && newWidth <= maxWidth) {
-                currentViewBox.width = newWidth;
-                currentViewBox.height = newHeight;
-                svg.setAttribute('viewBox', `${currentViewBox.x} ${currentViewBox.y} ${currentViewBox.width} ${currentViewBox.height}`);
+            // Fit map to show all markers
+            if (markers.length > 0) {
+                const group = new L.featureGroup(markers);
+                map.fitBounds(group.getBounds().pad(0.1));
             }
         });
     </script>
