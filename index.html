@@ -524,31 +524,27 @@
         const map = L.map('map', {
             center: [41.0343, 28.9784],
             zoom: 14,
-            minZoom: 13,
-            maxZoom: 18
+            minZoom: 12,
+            maxZoom: 18,
+            maxBoundsViscosity: 0.5  // Softer bounds - allows some movement
         });
         
         // Define boundaries around İstiklal Caddesi area
-        // These bounds cover from Taksim to Galata area
+        // These bounds cover from Taksim to Galata area with padding for rendering
         const bounds = L.latLngBounds(
-            [41.023, 28.970],  // Southwest corner
-            [41.040, 28.990]   // Northeast corner
+            [41.015, 28.960],  // Southwest corner (with padding)
+            [41.050, 29.000]   // Northeast corner (with padding)
         );
         
-        // Set max bounds to restrict panning
-        map.setMaxBounds(bounds);
-        
-        // Bounce back if user tries to pan outside
-        map.on('drag', function() {
-            map.panInsideBounds(bounds, { animate: false });
-        });
+        // Set max bounds with padding to allow proper tile rendering
+        map.setMaxBounds(bounds.pad(0.1));
         
         // Add dark theme map tiles (CartoDB Dark Matter)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
             subdomains: 'abcd',
             maxZoom: 19,
-            bounds: bounds
+            minZoom: 1  // Allow tiles to load at all zoom levels
         }).addTo(map);
         
         // Data storage
@@ -736,7 +732,11 @@
                 // Click to fly to marker
                 card.onclick = () => {
                     currentPinIndex = index;
-                    map.setView([point.lat, point.lon], 16, { animate: true, duration: 0.6 });
+                    map.flyTo([point.lat, point.lon], 17, { 
+                        animate: true, 
+                        duration: 0.8,
+                        easeLinearity: 0.25
+                    });
                     markers[index].openPopup();
                     
                     // Highlight active card
@@ -792,10 +792,11 @@
             currentPinIndex = index;
             const marker = markers[index];
             
-            // Fly to marker
-            map.setView([marker._pointData.lat, marker._pointData.lon], 16, { 
+            // Fly to marker with proper centering and zoom
+            map.flyTo([marker._pointData.lat, marker._pointData.lon], 17, { 
                 animate: true, 
-                duration: 0.6 
+                duration: 0.8,
+                easeLinearity: 0.25
             });
             
             // Open popup
