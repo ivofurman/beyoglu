@@ -227,43 +227,54 @@
         
         /* Position symbols on clock face */
         .clock-option.morning {
-            /* 8 o'clock position: 240 degrees */
-            top: 72.5%;
-            left: 11%;
+            /* 8 o'clock position: 240 degrees 
+               Using polar coordinates on 220px clock:
+               x = 110 + 90*cos(240°) = 110 - 45 = 65px (29.5%)
+               y = 110 + 90*sin(240°) = 110 + 77.9 = 187.9px (85.4%) */
+            top: 80%;
+            left: 8%;
+            transform: translate(-50%, -50%);
         }
         
         .clock-option.morning:hover {
-            /* Keep position while scaling */
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        
+        .clock-option.morning.active {
+            transform: translate(-50%, -50%) scale(1.2);
         }
         
         .clock-option.noon {
-            /* 12 o'clock position: 0 degrees */
-            top: 2%;
+            /* 12 o'clock position: 0 degrees 
+               x = 110, y = 110 - 90 = 20px */
+            top: 9%;
             left: 50%;
-            transform: translateX(-50%);
+            transform: translate(-50%, -50%);
         }
         
         .clock-option.noon:hover {
-            transform: translateX(-50%) scale(1.15);
+            transform: translate(-50%, -50%) scale(1.15);
         }
         
         .clock-option.noon.active {
-            transform: translateX(-50%) scale(1.2);
+            transform: translate(-50%, -50%) scale(1.2);
         }
         
         .clock-option.night {
-            /* 4 o'clock position: 120 degrees */
-            top: 72.5%;
-            left: 89%;
-            transform: translateX(-50%);
+            /* 4 o'clock position: 120 degrees 
+               x = 110 + 90*cos(120°) = 110 + 45 = 155px (70.5%)
+               y = 110 + 90*sin(120°) = 110 + 77.9 = 187.9px (85.4%) */
+            top: 80%;
+            left: 92%;
+            transform: translate(-50%, -50%);
         }
         
         .clock-option.night:hover {
-            transform: translateX(-50%) scale(1.15);
+            transform: translate(-50%, -50%) scale(1.15);
         }
         
         .clock-option.night.active {
-            transform: translateX(-50%) scale(1.2);
+            transform: translate(-50%, -50%) scale(1.2);
         }
         
         /* Clock hand pointing to active time */
