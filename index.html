@@ -161,24 +161,63 @@
             font-size: 32px;
             cursor: pointer;
             border-radius: 50%;
-            background: rgba(36, 36, 36, 0.8);
             border: 2px solid var(--outline);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             z-index: 5;
         }
         
-        .clock-option:hover {
-            transform: scale(1.15);
-            border-color: var(--brand-light);
-            box-shadow: 0 4px 16px rgba(127, 205, 187, 0.4);
-            background: rgba(127, 205, 187, 0.15);
+        .clock-option.morning {
+            background: rgba(251, 191, 36, 0.3);
         }
         
-        .clock-option.active {
-            background: var(--brand);
-            border-color: var(--brand);
+        .clock-option.morning:hover {
+            transform: scale(1.15);
+            border-color: var(--morning);
+            box-shadow: 0 4px 16px rgba(251, 191, 36, 0.5);
+            background: rgba(251, 191, 36, 0.5);
+        }
+        
+        .clock-option.morning.active {
+            background: var(--morning);
+            border-color: var(--morning);
             transform: scale(1.2);
-            box-shadow: 0 6px 20px rgba(127, 205, 187, 0.6);
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.7);
+        }
+        
+        .clock-option.noon {
+            background: rgba(249, 115, 22, 0.3);
+        }
+        
+        .clock-option.noon:hover {
+            transform: scale(1.15);
+            border-color: var(--noon);
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.5);
+            background: rgba(249, 115, 22, 0.5);
+        }
+        
+        .clock-option.noon.active {
+            background: var(--noon);
+            border-color: var(--noon);
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.7);
+        }
+        
+        .clock-option.night {
+            background: rgba(6, 182, 212, 0.3);
+        }
+        
+        .clock-option.night:hover {
+            transform: scale(1.15);
+            border-color: var(--night);
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.5);
+            background: rgba(6, 182, 212, 0.5);
+        }
+        
+        .clock-option.night.active {
+            background: var(--night);
+            border-color: var(--night);
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.7);
         }
         
         /* Position symbols on clock face */
@@ -188,6 +227,10 @@
             left: 11%;
         }
         
+        .clock-option.morning:hover {
+            /* Keep position while scaling */
+        }
+        
         .clock-option.noon {
             /* 12 o'clock position: 0 degrees */
             top: 2%;
@@ -195,7 +238,10 @@
             transform: translateX(-50%);
         }
         
-        .clock-option.noon:hover,
+        .clock-option.noon:hover {
+            transform: translateX(-50%) scale(1.15);
+        }
+        
         .clock-option.noon.active {
             transform: translateX(-50%) scale(1.2);
         }
@@ -204,6 +250,10 @@
             /* 5 o'clock position: 150 degrees */
             top: 69%;
             right: 11%;
+        }
+        
+        .clock-option.night:hover {
+            /* Keep position while scaling */
         }
         
         /* Clock hand pointing to active time */
@@ -349,9 +399,20 @@
             margin: 0 0 12px 0;
             font-size: 17px;
             font-weight: 600;
-            color: var(--brand);
             letter-spacing: 0;
             line-height: 1.3;
+        }
+        
+        .popup-title.time-morning {
+            color: var(--morning);
+        }
+        
+        .popup-title.time-noon {
+            color: var(--noon);
+        }
+        
+        .popup-title.time-night {
+            color: var(--night);
         }
         
         .popup-type {
@@ -721,10 +782,13 @@
                     icon: createMarkerIcon(color, point.type)
                 });
                 
+                // Determine time class based on timeIndex
+                const timeClass = timeIndex === 0 ? 'time-morning' : timeIndex === 1 ? 'time-noon' : 'time-night';
+                
                 // Create popup content (removed location line)
                 const popupContent = `
                     <div>
-                        <h3 class="popup-title">${escapeHtml(point.name)}</h3>
+                        <h3 class="popup-title ${timeClass}">${escapeHtml(point.name)}</h3>
                         <div class="popup-type"><strong>Tür:</strong> ${escapeHtml(point.type)}</div>
                         ${point.description ? `<div class="popup-description">${escapeHtml(point.description)}</div>` : ''}
                     </div>
