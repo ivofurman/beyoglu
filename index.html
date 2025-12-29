@@ -330,6 +330,75 @@
             color: var(--text) !important;
         }
         
+        /* Navigation controls */
+        .nav-controls {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 500;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: rgba(20, 24, 41, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 16px;
+            border: 1px solid var(--outline);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .nav-btn {
+            background: rgba(79, 70, 229, 0.2);
+            border: 1px solid var(--brand-light);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(79, 70, 229, 0.3);
+            border-color: var(--brand);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+        }
+        
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .nav-info {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+            letter-spacing: -0.01em;
+        }
+        
+        .nav-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
         /* Scrollbar styling */
         #sidebar::-webkit-scrollbar,
         .list::-webkit-scrollbar {
@@ -415,6 +484,19 @@
         </div>
     </div>
     
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevPin" title="Önceki konum">
+            <span>←</span>
+        </button>
+        <div>
+            <div class="nav-label">Konum</div>
+            <div class="nav-info"><span id="currentPin">1</span> / <span id="totalPins">13</span></div>
+        </div>
+        <button class="nav-btn" id="nextPin" title="Sonraki konum">
+            <span>→</span>
+        </button>
+    </div>
+    
     <script>
         // Check if Leaflet is loaded
         if (typeof L === 'undefined') {
@@ -456,6 +538,7 @@
         let mapData = null;
         let markers = [];
         let currentTimeIndex = 0;
+        let currentPinIndex = 0;
         
         // Embedded data - works without web server
         const EMBEDDED_DATA = {"morning":[{"name":"Taksim Meydanı (Taksim Camii)","lat":41.037096777358,"lon":28.9852811367523,"city":"İstanbul","country":"Türkiye","type":"Kamusal Alan / Dini Yapı (Camii)","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Sürekli hareket var; kuşlar ve yem atanlar + fotoğraf çeken turistler öne çıkıyor.","color":"#EBED58"},{"name":"Atatürk Kültür Merkezi","lat":41.036794441211,"lon":28.987494634987,"city":"İstanbul","country":"Türkiye","type":"Kültürel Yapı / Kültür ve Sanat Merkezi","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Genel olarak sakin; temizlik/servis gibi altyapı sesleri duyuluyor.","color":"#EBED58"},{"name":"Çiçek Pasajı","lat":41.03396210382,"lon":28.9780663245654,"city":"İstanbul","country":"Türkiye","type":"Tarihi Pasaj / Ticari ve Sosyal Mekân","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Esnaf hazırlığı baskın; masa-sandalye, tabak-çatal \"başlıyoruz\" sesi.","color":"#EBED58"},{"name":"İstiklal Caddesi","lat":41.03459419983,"lon":28.979868782772,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kentsel Aks / Kamusal Alan","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Daha \"yürünebilir\" ve sakin; dükkan açılış ritmi hissediliyor.","color":"#EBED58"},{"name":"Galatasaray Lisesi","lat":41.032987949806,"lon":28.97846789327,"city":"İstanbul","country":"Türkiye","type":"Eğitim Kurumu / Tarihi Okul Yapısı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: İnsanlar daha hedefli ve hızlı; ses daha düşük ve akış düz.","color":"#EBED58"},{"name":"Nevizade Sokak","lat":41.03475548655,"lon":28.9775601722467,"city":"İstanbul","country":"Türkiye","type":"Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Boş ve sessiz; geceye hazırlık gibi.","color":"#EBED58"},{"name":"St. Antuan Kilisesi","lat":41.032465406274,"lon":28.977101216362,"city":"İstanbul","country":"Türkiye","type":"Dini Yapı / Kilise","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Daha sakin; dua edenler + küçük turist grupları var.","color":"#EBED58"},{"name":"İstiklal Tramvay İstasyonu","lat":41.0288957136125,"lon":28.9749152569997,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Tarihi Tramvay Durağı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Çok sakin; bekleyen az, ses minimum.","color":"#EBED58"},{"name":"Beyoğlu-Karaköy Füniküler","lat":41.02840826465,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Füniküler Hattı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Sadece işe gidenler; sessiz ve hızlı geçiş.","color":"#EBED58"},{"name":"Galata Kulesi","lat":41.0256644426994,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kule / Anıtsal Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Sabah erken sessiz; sadece birkaç fotoğrafçı ve hazırlanma sesleri.","color":"#EBED58"},{"name":"Büyük Hendek Caddesi","lat":41.026102449025,"lon":28.973590054529,"city":"İstanbul","country":"Türkiye","type":"Kentsel Cadde / Ticari ve Sosyal Aks","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Boş; turist değil yerel; hızlı geçişler.","color":"#EBED58"},{"name":"Narmanlı Han","lat":41.029414094692,"lon":28.97453685475,"city":"İstanbul","country":"Türkiye","type":"Tarihi Han / Kültürel ve Ticari Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Henüz açık değil genelde; (açıksa) az sayıda sabah kahvecisi.","color":"#EBED58"},{"name":"Minoa Pera","lat":41.0299603,"lon":28.9732967,"city":"İstanbul","country":"Türkiye","type":"Kitabevi / Kafe","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"","color":"#EBED58"}],"noon":[{"name":"Taksim Meydanı (Taksim Camii)","lat":41.037096777358,"lon":28.9852811367523,"city":"İstanbul","country":"Türkiye","type":"Kamusal Alan / Dini Yapı (Camii)","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Kalabalık devam; turist rotasının ana durağı gibi çalışıyor.","color":"#DE9612"},{"name":"Atatürk Kültür Merkezi","lat":41.036794441211,"lon":28.987494634987,"city":"İstanbul","country":"Türkiye","type":"Kültürel Yapı / Kültür ve Sanat Merkezi","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Tur başlangıç noktası; rehber anlatıları ve geçiş trafiği artıyor.","color":"#DE9612"},{"name":"Çiçek Pasajı","lat":41.03396210382,"lon":28.9780663245654,"city":"İstanbul","country":"Türkiye","type":"Tarihi Pasaj / Ticari ve Sosyal Mekân","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Kontrollü kalabalık; kısa sohbetler ve garson trafiği öne çıkıyor.","color":"#DE9612"},{"name":"İstiklal Caddesi","lat":41.03459419983,"lon":28.979868782772,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kentsel Aks / Kamusal Alan","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Kalabalık ve çeşitlilik artıyor; turistlerle birlikte ses katmanlanıyor.","color":"#DE9612"},{"name":"Galatasaray Lisesi","lat":41.032987949806,"lon":28.97846789327,"city":"İstanbul","country":"Türkiye","type":"Eğitim Kurumu / Tarihi Okul Yapısı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Bekleyenler/buluşanlar artıyor; turist + lokal karışımı çoğalıyor.","color":"#DE9612"},{"name":"Nevizade Sokak","lat":41.03475548655,"lon":28.9775601722467,"city":"İstanbul","country":"Türkiye","type":"Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Yine sakin; gündüz kullanım neredeyse yok.","color":"#DE9612"},{"name":"St. Antuan Kilisesi","lat":41.032465406274,"lon":28.977101216362,"city":"İstanbul","country":"Türkiye","type":"Dini Yapı / Kilise","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Turist grupları belirgin; dışarıda kalabalık ve hareket artıyor.","color":"#DE9612"},{"name":"İstiklal Tramvay İstasyonu","lat":41.0288957136125,"lon":28.9749152569997,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Tarihi Tramvay Durağı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Orta yoğunlukta; akış düzenli.","color":"#DE9612"},{"name":"Beyoğlu-Karaköy Füniküler","lat":41.02840826465,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Füniküler Hattı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Turistler artıyor; \"hangi yöne gidelim?\" kararı burada veriliyor.","color":"#DE9612"},{"name":"Galata Kulesi","lat":41.0256644426994,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kule / Anıtsal Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Tur grupları ve rehber sesleri artıyor; kalabalık daha toplu hareket ediyor.","color":"#DE9612"},{"name":"Büyük Hendek Caddesi","lat":41.026102449025,"lon":28.973590054529,"city":"İstanbul","country":"Türkiye","type":"Kentsel Cadde / Ticari ve Sosyal Aks","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Hareket artıyor ama hâlâ \"geçiş hattı\"; fotoğraf çekip devam edenler ağırlıkta.","color":"#DE9612"},{"name":"Narmanlı Han","lat":41.029414094692,"lon":28.97453685475,"city":"İstanbul","country":"Türkiye","type":"Tarihi Han / Kültürel ve Ticari Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Hafta sonu sakin; (hafta içi) öğrencilerle kahve-ders-sohbet sesi artabiliyor.","color":"#DE9612"},{"name":"Minoa Pera","lat":41.0299603,"lon":28.9732967,"city":"İstanbul","country":"Türkiye","type":"Kitabevi / Kafe","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"","color":"#DE9612"}],"night":[{"name":"Taksim Meydanı (Taksim Camii)","lat":41.037096777358,"lon":28.9852811367523,"city":"İstanbul","country":"Türkiye","type":"Kamusal Alan / Dini Yapı (Camii)","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Daha da yoğun ve kaotik; kuş sesi kayboluyor, insan/araç sesleri ve (denk gelirse) ezan duyuluyor.","color":"#3E87A3"},{"name":"Atatürk Kültür Merkezi","lat":41.036794441211,"lon":28.987494634987,"city":"İstanbul","country":"Türkiye","type":"Kültürel Yapı / Kültür ve Sanat Merkezi","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Metro geçişi ağırlıkta; insan kısa süreli gelip geçiyor, araç sesi baskın.","color":"#3E87A3"},{"name":"Çiçek Pasajı","lat":41.03396210382,"lon":28.9780663245654,"city":"İstanbul","country":"Türkiye","type":"Tarihi Pasaj / Ticari ve Sosyal Mekân","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Eğlence zirve; kahkaha-müzik-bardak sesleri birleşip tek bir uğultuya dönüşüyor.","color":"#3E87A3"},{"name":"İstiklal Caddesi","lat":41.03459419983,"lon":28.979868782772,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kentsel Aks / Kamusal Alan","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: En kaotik zaman; insan uğultusu + müzik + tramvay aynı anda üst üste biniyor.","color":"#3E87A3"},{"name":"Galatasaray Lisesi","lat":41.032987949806,"lon":28.97846789327,"city":"İstanbul","country":"Türkiye","type":"Eğitim Kurumu / Tarihi Okul Yapısı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: İstiklal'in yoğun akışının merkezi; durup nefes alma boşluğu kalmıyor.","color":"#3E87A3"},{"name":"Nevizade Sokak","lat":41.03475548655,"lon":28.9775601722467,"city":"İstanbul","country":"Türkiye","type":"Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Patlama noktası; bar müziği, kalabalık ve eğlence sesleri sokağı dolduruyor.","color":"#3E87A3"},{"name":"St. Antuan Kilisesi","lat":41.032465406274,"lon":28.977101216362,"city":"İstanbul","country":"Türkiye","type":"Dini Yapı / Kilise","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Normalde kapanıyor; içi sessiz kalmalı ama dışarıda etkinlik varsa kalabalık görülebiliyor.","color":"#3E87A3"},{"name":"İstiklal Tramvay İstasyonu","lat":41.0288957136125,"lon":28.9749152569997,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Tarihi Tramvay Durağı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Aşırı kalabalık; bekleme, binme ve insan sesi çok yoğun.","color":"#3E87A3"},{"name":"Beyoğlu-Karaköy Füniküler","lat":41.02840826465,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Füniküler Hattı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Yetişme telaşı yükseliyor; tempo, adım sesi ve kalabalık hızlanıyor.","color":"#3E87A3"},{"name":"Galata Kulesi","lat":41.0256644426994,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kule / Anıtsal Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Buluşma noktası oluyor; bekleyen-sohbet edenlerle ses seviyesi yükseliyor.","color":"#3E87A3"},{"name":"Büyük Hendek Caddesi","lat":41.026102449025,"lon":28.973590054529,"city":"İstanbul","country":"Türkiye","type":"Kentsel Cadde / Ticari ve Sosyal Aks","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Kalabalık yükseliyor; cadde geçişten çok \"oturup vakit geçirme\"ye dönüyor.","color":"#3E87A3"},{"name":"Narmanlı Han","lat":41.029414094692,"lon":28.97453685475,"city":"İstanbul","country":"Türkiye","type":"Tarihi Han / Kültürel ve Ticari Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Profil yetişkine kayıyor; bar tarafıyla müzik ve sohbet yoğunlaşıyor.","color":"#3E87A3"},{"name":"Minoa Pera","lat":41.0299603,"lon":28.9732967,"city":"İstanbul","country":"Türkiye","type":"Kitabevi / Kafe","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"","color":"#3E87A3"}]};
@@ -573,12 +656,16 @@
                 
                 // Click to fly to marker
                 card.onclick = () => {
+                    currentPinIndex = index;
                     map.setView([point.lat, point.lon], 16, { animate: true, duration: 0.6 });
                     markers[index].openPopup();
                     
                     // Highlight active card
                     document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
                     card.classList.add('active');
+                    
+                    // Update navigation UI
+                    updateNavigationUI();
                 };
                 
                 list.appendChild(card);
@@ -595,6 +682,9 @@
             map.fitBounds(group.getBounds().pad(0.1));
         }
         
+        // Initialize navigation UI after first markers are created
+        setTimeout(() => updateNavigationUI(), 100);
+        
         // Handle slider change
         const slider = document.getElementById('timeSlider');
         const timeDisplay = document.getElementById('timeDisplay');
@@ -605,12 +695,95 @@
             timeDisplay.textContent = timeNames[value];
             updateMarkers(value);
             
+            // Reset pin index when changing time
+            currentPinIndex = 0;
+            updateNavigationUI();
+            
             // Fit map to show all markers
             if (markers.length > 0) {
                 const group = new L.featureGroup(markers);
                 map.fitBounds(group.getBounds().pad(0.1));
             }
         });
+        
+        // Navigation functions
+        function navigateToPin(index) {
+            if (index < 0 || index >= markers.length) return;
+            
+            currentPinIndex = index;
+            const marker = markers[index];
+            
+            // Fly to marker
+            map.setView([marker._pointData.lat, marker._pointData.lon], 16, { 
+                animate: true, 
+                duration: 0.6 
+            });
+            
+            // Open popup
+            marker.openPopup();
+            
+            // Highlight card in sidebar
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(c => c.classList.remove('active'));
+            if (cards[index]) {
+                cards[index].classList.add('active');
+                // Scroll card into view
+                cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Update navigation UI
+            updateNavigationUI();
+        }
+        
+        function updateNavigationUI() {
+            const currentPinEl = document.getElementById('currentPin');
+            const totalPinsEl = document.getElementById('totalPins');
+            const prevBtn = document.getElementById('prevPin');
+            const nextBtn = document.getElementById('nextPin');
+            
+            if (currentPinEl) currentPinEl.textContent = currentPinIndex + 1;
+            if (totalPinsEl) totalPinsEl.textContent = markers.length;
+            
+            // Disable buttons at boundaries
+            if (prevBtn) prevBtn.disabled = currentPinIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentPinIndex === markers.length - 1;
+        }
+        
+        // Navigation button handlers
+        const prevBtn = document.getElementById('prevPin');
+        const nextBtn = document.getElementById('nextPin');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentPinIndex > 0) {
+                    navigateToPin(currentPinIndex - 1);
+                }
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (currentPinIndex < markers.length - 1) {
+                    navigateToPin(currentPinIndex + 1);
+                }
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                if (currentPinIndex > 0) {
+                    navigateToPin(currentPinIndex - 1);
+                }
+            } else if (e.key === 'ArrowRight') {
+                if (currentPinIndex < markers.length - 1) {
+                    navigateToPin(currentPinIndex + 1);
+                }
+            }
+        });
+        
+        // Initialize navigation UI
+        updateNavigationUI();
     </script>
 </body>
 </html>
