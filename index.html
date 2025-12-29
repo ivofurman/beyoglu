@@ -126,13 +126,29 @@
             position: absolute;
             width: 12px;
             height: 12px;
-            background: var(--brand);
+            background: var(--morning);
             border-radius: 50%;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            box-shadow: 0 0 12px rgba(127, 205, 187, 0.6);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
             z-index: 10;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .clock-center.morning {
+            background: var(--morning);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+        }
+        
+        .clock-center.noon {
+            background: var(--noon);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+        }
+        
+        .clock-center.night {
+            background: var(--night);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
         }
         
         .clock-option {
@@ -195,26 +211,29 @@
             position: absolute;
             width: 3px;
             height: 85px;
-            background: linear-gradient(to top, var(--brand), transparent);
+            background: linear-gradient(to top, var(--morning), transparent);
             top: 50%;
             left: 50%;
             transform-origin: bottom center;
             transform: translate(-50%, -100%);
-            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
             z-index: 4;
             border-radius: 2px 2px 0 0;
         }
         
         .clock-hand.morning {
             transform: translate(-50%, -100%) rotate(210deg);
+            background: linear-gradient(to top, var(--morning), transparent);
         }
         
         .clock-hand.noon {
             transform: translate(-50%, -100%) rotate(0deg);
+            background: linear-gradient(to top, var(--noon), transparent);
         }
         
         .clock-hand.night {
             transform: translate(-50%, -100%) rotate(150deg);
+            background: linear-gradient(to top, var(--night), transparent);
         }
         
         .list {
@@ -503,7 +522,7 @@
                 <div class="clock-container">
                     <div class="clock-face"></div>
                     <div class="clock-hand morning" id="clockHand"></div>
-                    <div class="clock-center"></div>
+                    <div class="clock-center morning"></div>
                     <div class="clock-option morning active" data-time="0" title="Sabah - 7:00">🌅</div>
                     <div class="clock-option noon" data-time="1" title="Öğlen - 12:00">☀️</div>
                     <div class="clock-option night" data-time="2" title="Akşam - 17:00">🌙</div>
@@ -785,6 +804,7 @@
         
         // Handle clock option clicks
         const clockHand = document.getElementById('clockHand');
+        const clockCenter = document.querySelector('.clock-center');
         const clockOptions = document.querySelectorAll('.clock-option');
         
         clockOptions.forEach(option => {
@@ -796,11 +816,19 @@
                 clockOptions.forEach(opt => opt.classList.remove('active'));
                 this.classList.add('active');
                 
-                // Update clock hand rotation
+                // Update clock hand rotation and color
                 clockHand.className = 'clock-hand';
-                if (value === 0) clockHand.classList.add('morning');
-                else if (value === 1) clockHand.classList.add('noon');
-                else if (value === 2) clockHand.classList.add('night');
+                clockCenter.className = 'clock-center';
+                if (value === 0) {
+                    clockHand.classList.add('morning');
+                    clockCenter.classList.add('morning');
+                } else if (value === 1) {
+                    clockHand.classList.add('noon');
+                    clockCenter.classList.add('noon');
+                } else if (value === 2) {
+                    clockHand.classList.add('night');
+                    clockCenter.classList.add('night');
+                }
                 
                 // Update markers
                 updateMarkers(value);
