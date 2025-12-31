@@ -48,7 +48,9 @@
       "type": "Tarihi Kentsel Aks / Kamusal Alan",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Sabah: Daha “yürünebilir” ve sakin; dükkan açılış ritmi hissediliyor.",
-      "color": "#EBED58"
+      "color": "#EBED58",
+      "image": "<a href=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Sabah_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/%C4%B0stiklal_Caddesi_Sabah_Foto%C4%9Fraf.jpg/256px-%C4%B0stiklal_Caddesi_Sabah_Foto%C4%9Fraf.jpg?20251230152204\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"
     },
     {
       "name": "Galatasaray Lisesi",
@@ -148,7 +150,8 @@
       "type": "Tarihi Han / Kültürel ve Ticari Yapı",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Sabah: Neredeyse boş; sessiz ve yalnız bir atmosfer.",
-      "color": "#EBED58"
+      "color": "#EBED58",
+      "image": "<a href=\"https://commons.wikimedia.org/wiki/File:Narmanl%C4%B1_Han_Sabah_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Narmanl%C4%B1_Han_Sabah_Foto%C4%9Fraf.jpg/256px-Narmanl%C4%B1_Han_Sabah_Foto%C4%9Fraf.jpg?20251230154122\"></a>"
     },
     {
       "name": "Minoa Pera",
@@ -159,7 +162,9 @@
       "type": "Kitabevi / Kafe",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "",
-      "color": "#EBED58"
+      "color": "#EBED58",
+      "image": "<a href=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Sabah_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Minoa_Pera_Sabah_Foto%C4%9Fraf.jpg/256px-Minoa_Pera_Sabah_Foto%C4%9Fraf.jpg?20251230153732\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"
     }
   ],
   "noon": [
@@ -211,7 +216,9 @@
       "type": "Tarihi Kentsel Aks / Kamusal Alan",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Öğle: Kalabalık ve çeşitlilik artıyor; turistlerle birlikte ses katmanlanıyor.",
-      "color": "#DE9612"
+      "color": "#DE9612",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"İstiklal Caddesi Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg?20251230152201\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"
     },
     {
       "name": "Galatasaray Lisesi",
@@ -311,7 +318,8 @@
       "type": "Tarihi Han / Kültürel ve Ticari Yapı",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Öğle: Hafta sonu sakin; (hafta içi) öğrencilerle kahve-ders-sohbet sesi artabiliyor.",
-      "color": "#DE9612"
+      "color": "#DE9612",
+      "image": "<a href=\"https://commons.wikimedia.org/wiki/File:Narmanl%C4%B1_Han_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Narmanl%C4%B1_Han_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Narmanl%C4%B1_Han_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg?20251230154119\"></a>"
     },
     {
       "name": "Minoa Pera",
@@ -322,7 +330,9 @@
       "type": "Kitabevi / Kafe",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "",
-      "color": "#DE9612"
+      "color": "#DE9612",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Minoa Pera Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Minoa_Pera_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Minoa_Pera_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg?20251230153728\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"
     }
   ],
   "night": [
@@ -374,7 +384,9 @@
       "type": "Tarihi Kentsel Aks / Kamusal Alan",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Akşam: En kaotik zaman; insan uğultusu + müzik + tramvay aynı anda üst üste biniyor.",
-      "color": "#3E87A3"
+      "color": "#3E87A3",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"İstiklal Caddesi Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg?20251230152201\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"
     },
     {
       "name": "Galatasaray Lisesi",
@@ -474,7 +486,8 @@
       "type": "Tarihi Han / Kültürel ve Ticari Yapı",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Akşam: Profil yetişkine kayıyor; bar tarafıyla müzik ve sohbet yoğunlaşıyor.",
-      "color": "#3E87A3"
+      "color": "#3E87A3",
+      "image": "<a href=\"https://commons.wikimedia.org/wiki/File:Narmanl%C4%B1_Han_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Narmanl%C4%B1_Han_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Narmanl%C4%B1_Han_Ak%C5%9Fam_Foto%C4%9Fraf.jpg?20251230154119\"></a>"
     },
     {
       "name": "Minoa Pera",
@@ -485,7 +498,9 @@
       "type": "Kitabevi / Kafe",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "",
-      "color": "#3E87A3"
+      "color": "#3E87A3",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Minoa Pera Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Minoa_Pera_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Minoa_Pera_Ak%C5%9Fam_Foto%C4%9Fraf.jpg?20251230153727\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"
     }
   ]
 }
