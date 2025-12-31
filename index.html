@@ -703,15 +703,15 @@
         });
         
         // Define boundaries around İstiklal Caddesi area
-        // These bounds cover from Taksim to Galata area with padding for rendering
+        // These bounds cover from Taksim to Galata area with generous padding for navigation
         const bounds = L.latLngBounds(
-            [41.015, 28.960],  // Southwest corner (with padding)
-            [41.050, 29.000]   // Northeast corner (with padding)
+            [41.000, 28.940],  // Southwest corner (significantly expanded)
+            [41.065, 29.020]   // Northeast corner (significantly expanded)
         );
         
-        // Set max bounds with extra padding to allow navigation without hitting boundaries
-        // Increased from 0.1 to 0.3 for better tooltip viewing experience
-        map.setMaxBounds(bounds.pad(0.3));
+        // Set max bounds with large padding to allow smooth navigation without hitting boundaries
+        // Increased from 0.3 to 0.8 for much more freedom when panning and viewing tooltips
+        map.setMaxBounds(bounds.pad(0.8));
         
         // Add dark theme map tiles (CartoDB Dark Matter)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
