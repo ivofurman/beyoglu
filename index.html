@@ -903,9 +903,10 @@
                             const px = map.project(this.getLatLng());
                             
                             // Calculate offset based on popup height to center the tooltip itself
-                            // Popup is above the marker, so we shift view down to center the tooltip
+                            // Since popup is above the marker, subtracting from px.y moves the map view up
+                            // This brings the tooltip (which is above the pin) into the center of the viewport
                             const popupHeight = popup.getElement() ? popup.getElement().offsetHeight : 300;
-                            px.y -= popupHeight / 2; // Shift up by half the popup height to center it
+                            px.y -= popupHeight / 2; // Move map view up by half the popup height to center the tooltip
                             
                             map.panTo(map.unproject(px), {animate: true, duration: 0.5});
                         }
