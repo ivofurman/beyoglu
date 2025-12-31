@@ -405,11 +405,11 @@
         }
         
         .leaflet-popup-content {
-            margin: 16px !important;
+            margin: 12px !important;
             color: var(--text) !important;
             font-family: 'Open Sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
-            min-width: 280px !important;
-            max-width: 400px !important;
+            min-width: 240px !important;
+            max-width: 320px !important;
         }
         
         .leaflet-popup-tip {
@@ -419,8 +419,8 @@
         }
         
         .popup-title {
-            margin: 0 0 12px 0;
-            font-size: 17px;
+            margin: 0 0 8px 0;
+            font-size: 15px;
             font-weight: 600;
             letter-spacing: 0;
             line-height: 1.3;
@@ -439,8 +439,8 @@
         }
         
         .popup-type {
-            margin: 8px 0;
-            font-size: 13px;
+            margin: 6px 0;
+            font-size: 12px;
             color: #ffffff;
             font-weight: 500;
         }
@@ -453,13 +453,13 @@
         }
         
         .popup-description {
-            margin-top: 12px;
-            padding-top: 12px;
+            margin-top: 8px;
+            padding-top: 8px;
             border-top: 1px solid var(--outline);
-            font-size: 13px;
+            font-size: 12px;
             font-style: normal;
             color: var(--text);
-            line-height: 1.6;
+            line-height: 1.5;
             font-weight: 400;
         }
         
@@ -475,16 +475,16 @@
         
         /* Popup multimedia elements */
         .popup-media {
-            margin-top: 16px;
-            margin-bottom: 12px;
+            margin-top: 12px;
+            margin-bottom: 8px;
         }
         
         .popup-media img {
             width: 100%;
             height: auto;
-            border-radius: 6px;
-            margin-bottom: 16px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            border-radius: 4px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
             display: block;
             cursor: pointer;
             transition: transform 0.2s ease;
@@ -496,10 +496,14 @@
         
         .popup-media iframe {
             width: 100%;
+            max-width: 100%;
             margin-top: 8px;
-            border-radius: 6px;
+            margin-bottom: 4px;
+            padding: 2px;
+            border-radius: 4px;
             background: rgba(26, 26, 26, 0.8);
             border: 1px solid rgba(127, 205, 187, 0.2);
+            box-sizing: border-box;
         }
         
         .popup-image {
@@ -880,12 +884,19 @@
                 `;
                 
                 marker.bindPopup(popupContent, {
-                    maxWidth: 400,
-                    minWidth: 280,
-                    className: 'custom-popup'
+                    maxWidth: 320,
+                    minWidth: 240,
+                    className: 'custom-popup',
+                    autoPan: true,
+                    autoPanPadding: [20, 20]
                 });
                 marker.addTo(map);
                 markers.push(marker);
+                
+                // Add click event to pan to marker when popup opens
+                marker.on('click', function() {
+                    map.panTo(this.getLatLng());
+                });
                 
                 // Store reference for card click
                 marker._pointData = point;
