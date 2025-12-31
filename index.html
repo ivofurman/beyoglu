@@ -709,8 +709,9 @@
             [41.050, 29.000]   // Northeast corner (with padding)
         );
         
-        // Set max bounds with padding to allow proper tile rendering
-        map.setMaxBounds(bounds.pad(0.1));
+        // Set max bounds with extra padding to allow navigation without hitting boundaries
+        // Increased from 0.1 to 0.3 for better tooltip viewing experience
+        map.setMaxBounds(bounds.pad(0.3));
         
         // Add dark theme map tiles (CartoDB Dark Matter)
         L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
