@@ -888,14 +888,26 @@
                     minWidth: 240,
                     className: 'custom-popup',
                     autoPan: true,
-                    autoPanPadding: [20, 20]
+                    autoPanPadding: [50, 50]
                 });
                 marker.addTo(map);
                 markers.push(marker);
                 
-                // Add click event to pan to marker when popup opens
+                // Add click event to center map on tooltip when popup opens
                 marker.on('click', function() {
+                    // Pan to marker first
                     map.panTo(this.getLatLng());
+                    
+                    // Wait for popup to open, then adjust view to center the tooltip
+                    setTimeout(() => {
+                        const popup = this.getPopup();
+                        if (popup && popup.isOpen()) {
+                            // Get the popup position and adjust map center to account for popup offset
+                            const px = map.project(this.getLatLng());
+                            px.y -= 100; // Offset to center the popup vertically in viewport
+                            map.panTo(map.unproject(px), {animate: true, duration: 0.5});
+                        }
+                    }, 100);
                 });
                 
                 // Store reference for card click
