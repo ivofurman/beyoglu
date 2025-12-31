@@ -850,12 +850,16 @@
                         <h3 class="popup-title ${timeClass}">${escapeHtml(point.name)}</h3>
                         <div class="popup-type"><strong>Tür:</strong> ${escapeHtml(point.type)}</div>
                         ${point.description ? `<div class="popup-description">${escapeHtml(point.description)}</div>` : ''}
-                        ${point.image ? `<div class="popup-media"><img src="${point.image}" alt="${escapeHtml(point.name)}" class="popup-image" loading="lazy" onerror="this.style.display='none'"></div>` : ''}
-                        ${point.audio ? `<div class="popup-media"><audio controls class="popup-audio" preload="metadata"><source src="${point.audio}" type="audio/wav">Your browser does not support the audio element.</audio></div>` : ''}
+                        ${point.image ? `<div class="popup-media"><img src="${point.image}" alt="${escapeHtml(point.name)}" class="popup-image" loading="lazy" crossorigin="anonymous" onerror="this.style.display='none'"></div>` : ''}
+                        ${point.audio ? `<div class="popup-media"><audio controls class="popup-audio" preload="metadata" crossorigin="anonymous"><source src="${point.audio}" type="audio/wav">Your browser does not support the audio element.</audio></div>` : ''}
                     </div>
                 `;
                 
-                marker.bindPopup(popupContent);
+                marker.bindPopup(popupContent, {
+                    maxWidth: 400,
+                    minWidth: 280,
+                    className: 'custom-popup'
+                });
                 marker.addTo(map);
                 markers.push(marker);
                 
