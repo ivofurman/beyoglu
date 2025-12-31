@@ -10,8 +10,8 @@
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Sabah: Sürekli hareket var; kuşlar ve yem atanlar + fotoğraf çeken turistler öne çıkıyor.",
       "color": "#EBED58",
-      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Sabah_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Taksim_Meydan%C4%B1_Sabah_Foto%C4%9Fraf.jpg/256px-Taksim_Meydan%C4%B1_Sabah_Foto%C4%9Fraf.jpg\"></a>",
-      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\"></iframe>"
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Sabah_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Taksim Meydanı Sabah Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/3/3a/Taksim_Meydan%C4%B1_Sabah_Foto%C4%9Fraf.jpg/256px-Taksim_Meydan%C4%B1_Sabah_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay\"></iframe>"
     },
     {
       "name": "Atatürk Kültür Merkezi",
@@ -78,8 +78,8 @@
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Sabah: Daha sakin; dua edenler + küçük turist grupları var.",
       "color": "#EBED58",
-      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Sabah_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/St.Antuan_Kilisesi_Sabah_Foto%C4%9Fraf.jpg/256px-St.Antuan_Kilisesi_Sabah_Foto%C4%9Fraf.jpg?20251230155326\"></a>",
-      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\"></iframe>"
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Sabah_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"St. Antuan Kilisesi Sabah Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ee/St.Antuan_Kilisesi_Sabah_Foto%C4%9Fraf.jpg/256px-St.Antuan_Kilisesi_Sabah_Foto%C4%9Fraf.jpg?20251230155326\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay\"></iframe>"
     },
     {
       "name": "İstiklal Tramvay İstasyonu",
@@ -159,8 +159,8 @@
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Öğle: Kalabalık devam; turist rotasının ana durağı gibi çalışıyor.",
       "color": "#DE9612",
-      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"></a>",
-      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\"></iframe>"
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Taksim Meydanı Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay\"></iframe>"
     },
     {
       "name": "Atatürk Kültür Merkezi",
@@ -227,8 +227,8 @@
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Öğle: Turist grupları belirgin; dışarıda kalabalık ve hareket artıyor.",
       "color": "#DE9612",
-      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/St.Antuan_Kilisesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-St.Antuan_Kilisesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"></a>",
-      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\"></iframe>"
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"St. Antuan Kilisesi Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/e/ed/St.Antuan_Kilisesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-St.Antuan_Kilisesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay\"></iframe>"
     },
     {
       "name": "İstiklal Tramvay İstasyonu",
@@ -308,8 +308,8 @@
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Akşam: Daha da yoğun ve kaotik; kuş sesi kayboluyor, insan/araç sesleri ve (denk gelirse) ezan duyuluyor.",
       "color": "#3E87A3",
-      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Taksim_Meydan%C4%B1_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Taksim_Meydan%C4%B1_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"></a>",
-      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\"></iframe>"
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Taksim Meydanı Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/9/9e/Taksim_Meydan%C4%B1_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Taksim_Meydan%C4%B1_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Taksim_Meydan%C4%B1_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay\"></iframe>"
     },
     {
       "name": "Atatürk Kültür Merkezi",
@@ -376,8 +376,8 @@
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Akşam: Normalde kapanıyor; içi sessiz kalmalı ama dışarıda etkinlik varsa kalabalık görülebiliyor.",
       "color": "#3E87A3",
-      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/St.Antuan_Kilisesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-St.Antuan_Kilisesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"></a>",
-      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\"></iframe>"
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"St. Antuan Kilisesi Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/St.Antuan_Kilisesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-St.Antuan_Kilisesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:St.Antuan_Kilisesi_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay\"></iframe>"
     },
     {
       "name": "İstiklal Tramvay İstasyonu",
