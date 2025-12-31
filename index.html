@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İstiklal Caddesi - Interactive Time Map</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" 
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" 
+          crossorigin=""/>
+    
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" 
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" 
+            crossorigin=""></script>
+    
+    <style>
+        :root {
+            --bg: #1a1a1a;
+            --panel: #242424;
+            --text: #f0f0f0;
+            --muted: #8a8a8a;
+            --brand: #7fcdbb;
+            --brand-light: #41b6c4;
+            --highlight: #7fcdbb;
+            --outline: #2d2d2d;
+            --accent: #c7e9b4;
+            --morning: #fbbf24;
+            --noon: #f97316;
+            --night: #06b6d4;
+            --shadow: rgba(0, 0, 0, 0.5);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Open Sans', 'Noto Sans', sans-serif;
+            font-weight: 500;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .wrap {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            height: 100vh;
+            background: var(--bg);
+        }
+        
+        #sidebar {
+            background: var(--panel);
+            border-right: 1px solid var(--outline);
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+        
+        #map {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+        
+        /* Add padding to map to accommodate navigation controls */
+        .leaflet-container {
+            padding-bottom: 100px;
+        }
+        
+        .brand {
+            padding: 32px 24px 20px;
+            border-bottom: 1px solid var(--outline);
+            background: var(--panel);
+        }
+        
+        .brand h1 {
+            font-size: 26px;
+            margin: 0 0 8px;
+            color: var(--brand);
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            line-height: 1.2;
+        }
+        
+        .brand p {
+            margin: 0;
+            font-size: 14px;
+            color: var(--muted);
+            font-weight: 400;
+            line-height: 1.5;
+        }
+        
+        .time-control {
+            padding: 24px;
+            background: var(--panel);
+            border-bottom: 1px solid var(--outline);
+        }
+        
+        .clock-container {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+        }
+        
+        .clock-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px solid var(--outline);
+            border-radius: 50%;
+            background: rgba(31, 41, 55, 0.3);
+            backdrop-filter: blur(10px);
+        }
+        
+        .clock-center {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--morning);
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+            z-index: 10;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .clock-center.morning {
+            background: var(--morning);
+            box-shadow: 0 0 12px rgba(251, 191, 36, 0.6);
+        }
+        
+        .clock-center.noon {
+            background: var(--noon);
+            box-shadow: 0 0 12px rgba(249, 115, 22, 0.6);
+        }
+        
+        .clock-center.night {
+            background: var(--night);
+            box-shadow: 0 0 12px rgba(6, 182, 212, 0.6);
+        }
+        
+        .clock-option {
+            position: absolute;
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            cursor: pointer;
+            border-radius: 50%;
+            border: 2px solid var(--outline);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+        }
+        
+        .clock-option.morning {
+            background: rgba(251, 191, 36, 0.3);
+        }
+        
+        .clock-option.morning:hover {
+            transform: scale(1.15);
+            border-color: var(--morning);
+            box-shadow: 0 4px 16px rgba(251, 191, 36, 0.5);
+            background: rgba(251, 191, 36, 0.5);
+        }
+        
+        .clock-option.morning.active {
+            background: var(--morning);
+            border-color: var(--morning);
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(251, 191, 36, 0.7);
+        }
+        
+        .clock-option.noon {
+            background: rgba(249, 115, 22, 0.3);
+        }
+        
+        .clock-option.noon:hover {
+            transform: scale(1.15);
+            border-color: var(--noon);
+            box-shadow: 0 4px 16px rgba(249, 115, 22, 0.5);
+            background: rgba(249, 115, 22, 0.5);
+        }
+        
+        .clock-option.noon.active {
+            background: var(--noon);
+            border-color: var(--noon);
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.7);
+        }
+        
+        .clock-option.night {
+            background: rgba(6, 182, 212, 0.3);
+        }
+        
+        .clock-option.night:hover {
+            transform: scale(1.15);
+            border-color: var(--night);
+            box-shadow: 0 4px 16px rgba(6, 182, 212, 0.5);
+            background: rgba(6, 182, 212, 0.5);
+        }
+        
+        .clock-option.night.active {
+            background: var(--night);
+            border-color: var(--night);
+            transform: scale(1.2);
+            box-shadow: 0 6px 20px rgba(6, 182, 212, 0.7);
+        }
+        
+        /* Position symbols on clock face */
+        .clock-option.morning {
+            /* 8 o'clock position: 240 degrees 
+               Using polar coordinates on 220px clock:
+               x = 110 + 90*cos(240°) = 110 - 45 = 65px (29.5%)
+               y = 110 + 90*sin(240°) = 110 + 77.9 = 187.9px (85.4%) */
+            top: 80%;
+            left: 8%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .clock-option.morning:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        
+        .clock-option.morning.active {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        
+        .clock-option.noon {
+            /* 12 o'clock position: 0 degrees 
+               x = 110, y = 110 - 90 = 20px */
+            top: 9%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .clock-option.noon:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        
+        .clock-option.noon.active {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        
+        .clock-option.night {
+            /* 4 o'clock position: 120 degrees 
+               x = 110 + 90*cos(120°) = 110 + 45 = 155px (70.5%)
+               y = 110 + 90*sin(120°) = 110 + 77.9 = 187.9px (85.4%) */
+            top: 80%;
+            left: 92%;
+            transform: translate(-50%, -50%);
+        }
+        
+        .clock-option.night:hover {
+            transform: translate(-50%, -50%) scale(1.15);
+        }
+        
+        .clock-option.night.active {
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+        
+        /* Clock hand pointing to active time */
+        .clock-hand {
+            position: absolute;
+            width: 3px;
+            height: 85px;
+            background: linear-gradient(to top, var(--morning), transparent);
+            top: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            transform: translate(-50%, -100%);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), background 0.3s ease;
+            z-index: 4;
+            border-radius: 2px 2px 0 0;
+        }
+        
+        .clock-hand.morning {
+            transform: translate(-50%, -100%) rotate(240deg);
+            background: linear-gradient(to top, var(--morning), transparent);
+        }
+        
+        .clock-hand.noon {
+            transform: translate(-50%, -100%) rotate(0deg);
+            background: linear-gradient(to top, var(--noon), transparent);
+        }
+        
+        .clock-hand.night {
+            transform: translate(-50%, -100%) rotate(120deg);
+            background: linear-gradient(to top, var(--night), transparent);
+        }
+        
+        .list {
+            padding: 16px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .card {
+            background: rgba(31, 41, 55, 0.4);
+            border: 1px solid var(--outline);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 0 0 12px 0;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .card:hover {
+            background: rgba(127, 205, 187, 0.1);
+            border-color: var(--brand-light);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        .card.active {
+            background: rgba(127, 205, 187, 0.15);
+            border-color: var(--brand);
+            box-shadow: 0 0 0 2px rgba(127, 205, 187, 0.3);
+        }
+        
+        .card .title {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 4px;
+            color: var(--text);
+            letter-spacing: 0;
+            line-height: 1.4;
+        }
+        
+        .card .meta {
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 400;
+            line-height: 1.4;
+        }
+        
+        .legend {
+            position: absolute;
+            z-index: 500;
+            right: 20px;
+            top: 20px;
+            background: rgba(20, 24, 41, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 16px 20px;
+            color: var(--text);
+            font-size: 13px;
+            border: 1px solid var(--outline);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        
+        .legend h3 {
+            font-size: 12px;
+            margin-bottom: 12px;
+            color: var(--text);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 0;
+            font-size: 13px;
+            font-weight: 500;
+        }
+        
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Leaflet popup customization */
+        .leaflet-popup-content-wrapper {
+            background: rgba(36, 36, 36, 0.98) !important;
+            backdrop-filter: blur(20px);
+            color: var(--text) !important;
+            border-radius: 8px !important;
+            border: 1px solid var(--outline) !important;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6) !important;
+            padding: 4px !important;
+        }
+        
+        .leaflet-popup-content {
+            margin: 16px !important;
+            color: var(--text) !important;
+            font-family: 'Open Sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+            min-width: 280px !important;
+            max-width: 400px !important;
+        }
+        
+        .leaflet-popup-tip {
+            background: rgba(36, 36, 36, 0.98) !important;
+            border: 1px solid var(--outline) !important;
+            backdrop-filter: blur(20px);
+        }
+        
+        .popup-title {
+            margin: 0 0 12px 0;
+            font-size: 17px;
+            font-weight: 600;
+            letter-spacing: 0;
+            line-height: 1.3;
+        }
+        
+        .popup-title.time-morning {
+            color: var(--morning);
+        }
+        
+        .popup-title.time-noon {
+            color: var(--noon);
+        }
+        
+        .popup-title.time-night {
+            color: var(--night);
+        }
+        
+        .popup-type {
+            margin: 8px 0;
+            font-size: 13px;
+            color: #ffffff;
+            font-weight: 500;
+        }
+        
+        .popup-location {
+            margin: 8px 0;
+            font-size: 12px;
+            color: var(--muted);
+            font-weight: 400;
+        }
+        
+        .popup-description {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--outline);
+            font-size: 13px;
+            font-style: normal;
+            color: var(--text);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .leaflet-popup-close-button {
+            color: var(--muted) !important;
+            font-size: 20px !important;
+            font-weight: 600 !important;
+        }
+        
+        .leaflet-popup-close-button:hover {
+            color: var(--text) !important;
+        }
+        
+        /* Popup multimedia elements */
+        .popup-media {
+            margin-top: 16px;
+        }
+        
+        .popup-media img {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            display: block;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .popup-media img:hover {
+            transform: scale(1.02);
+        }
+        
+        .popup-media iframe {
+            width: 100%;
+            margin-top: 12px;
+            border-radius: 6px;
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(127, 205, 187, 0.2);
+        }
+        
+        .popup-image {
+            width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            display: block;
+        }
+        
+        .popup-audio {
+            width: 100%;
+            margin-top: 12px;
+            border-radius: 6px;
+            background: rgba(26, 26, 26, 0.8);
+            outline: none;
+        }
+        
+        .popup-audio:focus {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px;
+        }
+        
+        /* Navigation controls */
+        .nav-controls {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 500;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            background: rgba(36, 36, 36, 0.95);
+            backdrop-filter: blur(20px);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border: 1px solid var(--outline);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+        }
+        
+        .nav-btn {
+            background: rgba(127, 205, 187, 0.15);
+            border: 1px solid var(--brand-light);
+            color: var(--text);
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            user-select: none;
+        }
+        
+        .nav-btn:hover {
+            background: rgba(127, 205, 187, 0.25);
+            border-color: var(--brand);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+        
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+        
+        .nav-info {
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 60px;
+            text-align: center;
+            letter-spacing: -0.01em;
+        }
+        
+        .nav-label {
+            color: var(--muted);
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Scrollbar styling */
+        #sidebar::-webkit-scrollbar,
+        .list::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        #sidebar::-webkit-scrollbar-track,
+        .list::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        #sidebar::-webkit-scrollbar-thumb,
+        .list::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+        }
+        
+        #sidebar::-webkit-scrollbar-thumb:hover,
+        .list::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        @media (max-width: 900px) {
+            .wrap {
+                grid-template-columns: 1fr;
+            }
+            #sidebar {
+                height: 42%;
+                border-right: none;
+                border-bottom: 1px solid var(--outline);
+            }
+            #map {
+                height: 58%;
+            }
+            .legend {
+                right: 12px;
+                top: 12px;
+                padding: 12px 16px;
+            }
+            .nav-controls {
+                bottom: 12px;
+                padding: 10px 16px;
+                gap: 8px;
+            }
+            .nav-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <aside id="sidebar">
+            <div class="brand">
+                <h1>İstiklal Caddesi</h1>
+                <p>Sabah, öğlen ve akşam farklı karakterler sergiliyor.</p>
+            </div>
+            
+            <div class="time-control">
+                <div class="clock-container">
+                    <div class="clock-face"></div>
+                    <div class="clock-hand morning" id="clockHand"></div>
+                    <div class="clock-center morning"></div>
+                    <div class="clock-option morning active" data-time="0" title="Sabah - 8:00">🌅</div>
+                    <div class="clock-option noon" data-time="1" title="Öğlen - 12:00">☀️</div>
+                    <div class="clock-option night" data-time="2" title="Akşam - 16:00">🌙</div>
+                </div>
+            </div>
+            
+            <div class="list" id="locationList"></div>
+        </aside>
+        
+        <main id="map"></main>
+    </div>
+    
+    <div class="nav-controls">
+        <button class="nav-btn" id="prevPin" title="Önceki konum">
+            <span>←</span>
+        </button>
+        <button class="nav-btn" id="homeBtn" title="Başlangıca dön" aria-label="Haritayı başlangıç görünümüne döndür">
+            <span>⌂</span>
+        </button>
+        <button class="nav-btn" id="nextPin" title="Sonraki konum">
+            <span>→</span>
+        </button>
+    </div>
+    
+    <script>
+        // Check if Leaflet is loaded
+        if (typeof L === 'undefined') {
+            document.getElementById('map').innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#f2efe9;text-align:center;padding:40px;"><div><h2 style="color:#e96e36;margin-bottom:20px;">⚠️ Leaflet Yüklenemedi</h2><p>Haritayı görmek için internet bağlantısı gereklidir.</p><p style="margin-top:20px;font-size:14px;color:#a3adc4;">Lütfen internet bağlantınızı kontrol edin ve sayfayı yenileyin.</p></div></div>';
+            throw new Error('Leaflet library not loaded');
+        }
+        
+        // Initialize the map with options
+        const map = L.map('map', {
+            center: [41.0343, 28.9784],
+            zoom: 14,
+            minZoom: 12,
+            maxZoom: 18,
+            maxBoundsViscosity: 0.5  // Softer bounds - allows some movement
+        });
+        
+        // Define boundaries around İstiklal Caddesi area
+        // These bounds cover from Taksim to Galata area with padding for rendering
+        const bounds = L.latLngBounds(
+            [41.015, 28.960],  // Southwest corner (with padding)
+            [41.050, 29.000]   // Northeast corner (with padding)
+        );
+        
+        // Set max bounds with padding to allow proper tile rendering
+        map.setMaxBounds(bounds.pad(0.1));
+        
+        // Add dark theme map tiles (CartoDB Dark Matter)
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 19,
+            minZoom: 1  // Allow tiles to load at all zoom levels
+        }).addTo(map);
+        
+        // Data storage
+        let mapData = null;
+        let markers = [];
+        let currentTimeIndex = 0;
+        let currentPinIndex = 0;
+        
+        // Embedded data - works without web server
+        const EMBEDDED_DATA = {"morning":[{"name":"Taksim Meydanı (Taksim Camii)","lat":41.037096777358,"lon":28.9852811367523,"city":"İstanbul","country":"Türkiye","type":"Kamusal Alan / Dini Yapı (Camii)","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Sürekli hareket var; kuşlar ve yem atanlar + fotoğraf çeken turistler öne çıkıyor.","color":"#EBED58"},{"name":"Atatürk Kültür Merkezi","lat":41.036794441211,"lon":28.987494634987,"city":"İstanbul","country":"Türkiye","type":"Kültürel Yapı / Kültür ve Sanat Merkezi","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Genel olarak sakin; temizlik/servis gibi altyapı sesleri duyuluyor.","color":"#EBED58"},{"name":"Çiçek Pasajı","lat":41.03396210382,"lon":28.9780663245654,"city":"İstanbul","country":"Türkiye","type":"Tarihi Pasaj / Ticari ve Sosyal Mekân","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Esnaf hazırlığı baskın; masa-sandalye, tabak-çatal \"başlıyoruz\" sesi.","color":"#EBED58"},{"name":"İstiklal Caddesi","lat":41.03459419983,"lon":28.979868782772,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kentsel Aks / Kamusal Alan","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Daha \"yürünebilir\" ve sakin; dükkan açılış ritmi hissediliyor.","color":"#EBED58","image":"<a href=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Sabah_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/%C4%B0stiklal_Caddesi_Sabah_Foto%C4%9Fraf.jpg/256px-%C4%B0stiklal_Caddesi_Sabah_Foto%C4%9Fraf.jpg?20251230152204\"></a>","audio":"<iframe src=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"},{"name":"Galatasaray Lisesi","lat":41.032987949806,"lon":28.97846789327,"city":"İstanbul","country":"Türkiye","type":"Eğitim Kurumu / Tarihi Okul Yapısı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: İnsanlar daha hedefli ve hızlı; ses daha düşük ve akış düz.","color":"#EBED58"},{"name":"Nevizade Sokak","lat":41.03475548655,"lon":28.9775601722467,"city":"İstanbul","country":"Türkiye","type":"Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Boş ve sessiz; geceye hazırlık gibi.","color":"#EBED58"},{"name":"St. Antuan Kilisesi","lat":41.032465406274,"lon":28.977101216362,"city":"İstanbul","country":"Türkiye","type":"Dini Yapı / Kilise","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Daha sakin; dua edenler + küçük turist grupları var.","color":"#EBED58"},{"name":"İstiklal Tramvay İstasyonu","lat":41.0288957136125,"lon":28.9749152569997,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Tarihi Tramvay Durağı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Çok sakin; bekleyen az, ses minimum.","color":"#EBED58"},{"name":"Beyoğlu-Karaköy Füniküler","lat":41.02840826465,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Füniküler Hattı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Sadece işe gidenler; sessiz ve hızlı geçiş.","color":"#EBED58"},{"name":"Galata Kulesi","lat":41.0256644426994,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kule / Anıtsal Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Sabah erken sessiz; sadece birkaç fotoğrafçı ve hazırlanma sesleri.","color":"#EBED58"},{"name":"Büyük Hendek Caddesi","lat":41.026102449025,"lon":28.973590054529,"city":"İstanbul","country":"Türkiye","type":"Kentsel Cadde / Ticari ve Sosyal Aks","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Boş; turist değil yerel; hızlı geçişler.","color":"#EBED58"},{"name":"Narmanlı Han","lat":41.029414094692,"lon":28.97453685475,"city":"İstanbul","country":"Türkiye","type":"Tarihi Han / Kültürel ve Ticari Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Sabah: Henüz açık değil genelde; (açıksa) az sayıda sabah kahvecisi.","color":"#EBED58","image":"<a href=\"https://commons.wikimedia.org/wiki/File:Narmanl%C4%B1_Han_Sabah_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/1/13/Narmanl%C4%B1_Han_Sabah_Foto%C4%9Fraf.jpg/256px-Narmanl%C4%B1_Han_Sabah_Foto%C4%9Fraf.jpg?20251230154122\"></a>"},{"name":"Minoa Pera","lat":41.0299603,"lon":28.9732967,"city":"İstanbul","country":"Türkiye","type":"Kitabevi / Kafe","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"","color":"#EBED58","image":"<a href=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Sabah_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/6/62/Minoa_Pera_Sabah_Foto%C4%9Fraf.jpg/256px-Minoa_Pera_Sabah_Foto%C4%9Fraf.jpg?20251230153732\"></a>","audio":"<iframe src=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"}],"noon":[{"name":"Taksim Meydanı (Taksim Camii)","lat":41.037096777358,"lon":28.9852811367523,"city":"İstanbul","country":"Türkiye","type":"Kamusal Alan / Dini Yapı (Camii)","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Kalabalık devam; turist rotasının ana durağı gibi çalışıyor.","color":"#DE9612"},{"name":"Atatürk Kültür Merkezi","lat":41.036794441211,"lon":28.987494634987,"city":"İstanbul","country":"Türkiye","type":"Kültürel Yapı / Kültür ve Sanat Merkezi","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Tur başlangıç noktası; rehber anlatıları ve geçiş trafiği artıyor.","color":"#DE9612"},{"name":"Çiçek Pasajı","lat":41.03396210382,"lon":28.9780663245654,"city":"İstanbul","country":"Türkiye","type":"Tarihi Pasaj / Ticari ve Sosyal Mekân","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Kontrollü kalabalık; kısa sohbetler ve garson trafiği öne çıkıyor.","color":"#DE9612"},{"name":"İstiklal Caddesi","lat":41.03459419983,"lon":28.979868782772,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kentsel Aks / Kamusal Alan","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Kalabalık ve çeşitlilik artıyor; turistlerle birlikte ses katmanlanıyor.","color":"#DE9612","image":"<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"İstiklal Caddesi Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg?20251230152201\"></a>","audio":"<iframe src=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"},{"name":"Galatasaray Lisesi","lat":41.032987949806,"lon":28.97846789327,"city":"İstanbul","country":"Türkiye","type":"Eğitim Kurumu / Tarihi Okul Yapısı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Bekleyenler/buluşanlar artıyor; turist + lokal karışımı çoğalıyor.","color":"#DE9612"},{"name":"Nevizade Sokak","lat":41.03475548655,"lon":28.9775601722467,"city":"İstanbul","country":"Türkiye","type":"Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Yine sakin; gündüz kullanım neredeyse yok.","color":"#DE9612"},{"name":"St. Antuan Kilisesi","lat":41.032465406274,"lon":28.977101216362,"city":"İstanbul","country":"Türkiye","type":"Dini Yapı / Kilise","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Turist grupları belirgin; dışarıda kalabalık ve hareket artıyor.","color":"#DE9612"},{"name":"İstiklal Tramvay İstasyonu","lat":41.0288957136125,"lon":28.9749152569997,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Tarihi Tramvay Durağı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Orta yoğunlukta; akış düzenli.","color":"#DE9612"},{"name":"Beyoğlu-Karaköy Füniküler","lat":41.02840826465,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Füniküler Hattı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Turistler artıyor; \"hangi yöne gidelim?\" kararı burada veriliyor.","color":"#DE9612"},{"name":"Galata Kulesi","lat":41.0256644426994,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kule / Anıtsal Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Tur grupları ve rehber sesleri artıyor; kalabalık daha toplu hareket ediyor.","color":"#DE9612"},{"name":"Büyük Hendek Caddesi","lat":41.026102449025,"lon":28.973590054529,"city":"İstanbul","country":"Türkiye","type":"Kentsel Cadde / Ticari ve Sosyal Aks","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Hareket artıyor ama hâlâ \"geçiş hattı\"; fotoğraf çekip devam edenler ağırlıkta.","color":"#DE9612"},{"name":"Narmanlı Han","lat":41.029414094692,"lon":28.97453685475,"city":"İstanbul","country":"Türkiye","type":"Tarihi Han / Kültürel ve Ticari Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Öğle: Hafta sonu sakin; (hafta içi) öğrencilerle kahve-ders-sohbet sesi artabiliyor.","color":"#DE9612","image":"<a href=\"https://commons.wikimedia.org/wiki/File:Narmanl%C4%B1_Han_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Narmanl%C4%B1_Han_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Narmanl%C4%B1_Han_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg?20251230154119\"></a>"},{"name":"Minoa Pera","lat":41.0299603,"lon":28.9732967,"city":"İstanbul","country":"Türkiye","type":"Kitabevi / Kafe","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"","color":"#DE9612","image":"<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Minoa Pera Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/Minoa_Pera_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Minoa_Pera_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg?20251230153728\"></a>","audio":"<iframe src=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"}],"night":[{"name":"Taksim Meydanı (Taksim Camii)","lat":41.037096777358,"lon":28.9852811367523,"city":"İstanbul","country":"Türkiye","type":"Kamusal Alan / Dini Yapı (Camii)","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Daha da yoğun ve kaotik; kuş sesi kayboluyor, insan/araç sesleri ve (denk gelirse) ezan duyuluyor.","color":"#3E87A3"},{"name":"Atatürk Kültür Merkezi","lat":41.036794441211,"lon":28.987494634987,"city":"İstanbul","country":"Türkiye","type":"Kültürel Yapı / Kültür ve Sanat Merkezi","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Metro geçişi ağırlıkta; insan kısa süreli gelip geçiyor, araç sesi baskın.","color":"#3E87A3"},{"name":"Çiçek Pasajı","lat":41.03396210382,"lon":28.9780663245654,"city":"İstanbul","country":"Türkiye","type":"Tarihi Pasaj / Ticari ve Sosyal Mekân","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Eğlence zirve; kahkaha-müzik-bardak sesleri birleşip tek bir uğultuya dönüşüyor.","color":"#3E87A3"},{"name":"İstiklal Caddesi","lat":41.03459419983,"lon":28.979868782772,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kentsel Aks / Kamusal Alan","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: En kaotik zaman; insan uğultusu + müzik + tramvay aynı anda üst üste biniyor.","color":"#3E87A3","image":"<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"İstiklal Caddesi Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Foto%C4%9Fraf.jpg?20251230152201\"></a>","audio":"<iframe src=\"https://commons.wikimedia.org/wiki/File:%C4%B0stiklal_Caddesi_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"},{"name":"Galatasaray Lisesi","lat":41.032987949806,"lon":28.97846789327,"city":"İstanbul","country":"Türkiye","type":"Eğitim Kurumu / Tarihi Okul Yapısı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: İstiklal'in yoğun akışının merkezi; durup nefes alma boşluğu kalmıyor.","color":"#3E87A3"},{"name":"Nevizade Sokak","lat":41.03475548655,"lon":28.9775601722467,"city":"İstanbul","country":"Türkiye","type":"Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Patlama noktası; bar müziği, kalabalık ve eğlence sesleri sokağı dolduruyor.","color":"#3E87A3"},{"name":"St. Antuan Kilisesi","lat":41.032465406274,"lon":28.977101216362,"city":"İstanbul","country":"Türkiye","type":"Dini Yapı / Kilise","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Normalde kapanıyor; içi sessiz kalmalı ama dışarıda etkinlik varsa kalabalık görülebiliyor.","color":"#3E87A3"},{"name":"İstiklal Tramvay İstasyonu","lat":41.0288957136125,"lon":28.9749152569997,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Tarihi Tramvay Durağı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Aşırı kalabalık; bekleme, binme ve insan sesi çok yoğun.","color":"#3E87A3"},{"name":"Beyoğlu-Karaköy Füniküler","lat":41.02840826465,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Ulaşım Yapısı / Füniküler Hattı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Yetişme telaşı yükseliyor; tempo, adım sesi ve kalabalık hızlanıyor.","color":"#3E87A3"},{"name":"Galata Kulesi","lat":41.0256644426994,"lon":28.9740071865628,"city":"İstanbul","country":"Türkiye","type":"Tarihi Kule / Anıtsal Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Buluşma noktası oluyor; bekleyen-sohbet edenlerle ses seviyesi yükseliyor.","color":"#3E87A3"},{"name":"Büyük Hendek Caddesi","lat":41.026102449025,"lon":28.973590054529,"city":"İstanbul","country":"Türkiye","type":"Kentsel Cadde / Ticari ve Sosyal Aks","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Kalabalık yükseliyor; cadde geçişten çok \"oturup vakit geçirme\"ye dönüyor.","color":"#3E87A3"},{"name":"Narmanlı Han","lat":41.029414094692,"lon":28.97453685475,"city":"İstanbul","country":"Türkiye","type":"Tarihi Han / Kültürel ve Ticari Yapı","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"Akşam: Profil yetişkine kayıyor; bar tarafıyla müzik ve sohbet yoğunlaşıyor.","color":"#3E87A3","image":"<a href=\"https://commons.wikimedia.org/wiki/File:Narmanl%C4%B1_Han_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Narmanl%C4%B1_Han_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Narmanl%C4%B1_Han_Ak%C5%9Fam_Foto%C4%9Fraf.jpg?20251230154119\"></a>"},{"name":"Minoa Pera","lat":41.0299603,"lon":28.9732967,"city":"İstanbul","country":"Türkiye","type":"Kitabevi / Kafe","method":"Görsel Belgeleme / Ses Yürüyüşü","description":"","color":"#3E87A3","image":"<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Minoa Pera Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Minoa_Pera_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Minoa_Pera_Ak%C5%9Fam_Foto%C4%9Fraf.jpg?20251230153727\"></a>","audio":"<iframe src=\"https://commons.wikimedia.org/wiki/File:Minoa_Pera_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen=\"\"></iframe>"}]};
+        
+        // Time period names with symbols
+        const timeNames = {
+            0: '🌅',  // Sunrise for morning (Sabah)
+            1: '☀️',  // Sun for noon (Öğlen)
+            2: '🌙'   // Moon for night (Akşam)
+        };
+        
+        const timeKeys = {
+            0: 'morning',
+            1: 'noon',
+            2: 'night'
+        };
+        
+        const timeColors = {
+            0: '#fbbf24',
+            1: '#f97316',
+            2: '#06b6d4'
+        };
+        
+        // Icon mapping based on asset type
+        function getIconForType(type) {
+            const typeKey = type.toLowerCase();
+            
+            // Religious buildings
+            if (typeKey.includes('camii') || typeKey.includes('kilise') || typeKey.includes('dini')) {
+                return '🕌';
+            }
+            // Cultural buildings
+            if (typeKey.includes('kültür') || typeKey.includes('müze')) {
+                return '🎭';
+            }
+            // Educational
+            if (typeKey.includes('eğitim') || typeKey.includes('okul') || typeKey.includes('lise')) {
+                return '🎓';
+            }
+            // Tower/Monument
+            if (typeKey.includes('kule') || typeKey.includes('anıt')) {
+                return '🗼';
+            }
+            // Transportation
+            if (typeKey.includes('ulaşım') || typeKey.includes('tramvay') || typeKey.includes('füniküler')) {
+                return '🚃';
+            }
+            // Historic passage/street
+            if (typeKey.includes('pasaj') || typeKey.includes('sokak')) {
+                return '🏛️';
+            }
+            // Street/Public space
+            if (typeKey.includes('cadde') || typeKey.includes('kamusal alan') || typeKey.includes('meydan')) {
+                return '🏙️';
+            }
+            // Han (historic building)
+            if (typeKey.includes('han')) {
+                return '🏢';
+            }
+            // Bookstore/Cafe
+            if (typeKey.includes('kitabevi') || typeKey.includes('kafe')) {
+                return '📚';
+            }
+            
+            // Default
+            return '📍';
+        }
+        
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            if (text == null) return '';
+            const div = document.createElement('div');
+            div.textContent = String(text);
+            return div.innerHTML;
+        }
+        
+        // Create custom marker icon with emoji and color
+        function createMarkerIcon(color, type) {
+            const icon = getIconForType(type);
+            return L.divIcon({
+                className: 'custom-marker',
+                html: `<div style="
+                    position: relative;
+                    width: 32px;
+                    height: 32px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        position: absolute;
+                        width: 24px;
+                        height: 24px;
+                        background-color: ${color};
+                        border-radius: 50%;
+                        border: 2px solid white;
+                        box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+                        opacity: 0.9;
+                    "></div>
+                    <div style="
+                        position: relative;
+                        font-size: 14px;
+                        line-height: 1;
+                        filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+                    ">${icon}</div>
+                </div>`,
+                iconSize: [32, 32],
+                iconAnchor: [16, 16],
+                popupAnchor: [0, -16]
+            });
+        }
+        
+        // Update markers based on time selection
+        function updateMarkers(timeIndex) {
+            // Track currently open popup location before removing markers
+            let openPopupLatLng = null;
+            markers.forEach(marker => {
+                if (marker.isPopupOpen()) {
+                    openPopupLatLng = marker.getLatLng();
+                }
+            });
+            
+            // Remove existing markers
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
+            if (!mapData) return;
+            
+            const timeKey = timeKeys[timeIndex];
+            const color = timeColors[timeIndex];
+            const points = mapData[timeKey];
+            
+            if (!points || points.length === 0) {
+                console.warn(`No data found for ${timeKey}`);
+                return;
+            }
+            
+            // Add new markers
+            let markerToOpen = null;
+            points.forEach((point, index) => {
+                const marker = L.marker([point.lat, point.lon], {
+                    icon: createMarkerIcon(color, point.type)
+                });
+                
+                // Determine time class based on timeIndex
+                const timeClass = timeIndex === 0 ? 'time-morning' : timeIndex === 1 ? 'time-noon' : 'time-night';
+                
+                // Create popup content (removed location line)
+                const popupContent = `
+                    <div>
+                        <h3 class="popup-title ${timeClass}">${escapeHtml(point.name)}</h3>
+                        <div class="popup-type"><strong>Tür:</strong> ${escapeHtml(point.type)}</div>
+                        ${point.description ? `<div class="popup-description">${escapeHtml(point.description)}</div>` : ''}
+                        ${point.image ? `<div class="popup-media">${point.image}</div>` : ''}
+                        ${point.audio ? `<div class="popup-media">${point.audio}</div>` : ''}
+                    </div>
+                `;
+                
+                marker.bindPopup(popupContent, {
+                    maxWidth: 400,
+                    minWidth: 280,
+                    className: 'custom-popup'
+                });
+                marker.addTo(map);
+                markers.push(marker);
+                
+                // Store reference for card click
+                marker._pointData = point;
+                marker._pointIndex = index;
+                
+                // Check if this marker is at the same location as the previously open popup
+                if (openPopupLatLng && marker.getLatLng().equals(openPopupLatLng)) {
+                    markerToOpen = marker;
+                }
+            });
+            
+            // Reopen popup at the same location if one was open
+            if (markerToOpen) {
+                setTimeout(() => {
+                    markerToOpen.openPopup();
+                }, 100); // Small delay to ensure marker is fully added
+            }
+            
+            // Update location list
+            updateLocationList(points, timeIndex);
+        }
+        
+        // Update location list in sidebar
+        function updateLocationList(points, timeIndex) {
+            const list = document.getElementById('locationList');
+            list.innerHTML = '';
+            
+            points.forEach((point, index) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                
+                const title = document.createElement('div');
+                title.className = 'title';
+                title.textContent = `${index + 1}. ${point.name}`;
+                
+                const meta = document.createElement('div');
+                meta.className = 'meta';
+                meta.textContent = point.type;
+                
+                card.appendChild(title);
+                card.appendChild(meta);
+                
+                // Click to fly to marker
+                card.onclick = () => {
+                    currentPinIndex = index;
+                    map.flyTo([point.lat, point.lon], 17, { 
+                        animate: true, 
+                        duration: 1.2,
+                        easeLinearity: 0.15
+                    });
+                    markers[index].openPopup();
+                    
+                    // Highlight active card
+                    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+                    
+                    // Update navigation UI
+                    updateNavigationUI();
+                };
+                
+                list.appendChild(card);
+            });
+        }
+        
+        // Initialize with embedded data
+        mapData = EMBEDDED_DATA;
+        updateMarkers(0); // Show morning data by default
+        
+        // Fit map to show all markers with smooth initial animation
+        if (markers.length > 0) {
+            const group = new L.featureGroup(markers);
+            map.flyToBounds(group.getBounds().pad(0.1), {
+                animate: true,
+                duration: 1.5,
+                easeLinearity: 0.15
+            });
+        }
+        
+        // Initialize navigation UI after first markers are created
+        setTimeout(() => updateNavigationUI(), 100);
+        
+        // Handle clock option clicks
+        const clockHand = document.getElementById('clockHand');
+        const clockCenter = document.querySelector('.clock-center');
+        const clockOptions = document.querySelectorAll('.clock-option');
+        
+        clockOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-time'));
+                currentTimeIndex = value;
+                
+                // Update active state
+                clockOptions.forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update clock hand rotation and color
+                clockHand.className = 'clock-hand';
+                clockCenter.className = 'clock-center';
+                if (value === 0) {
+                    clockHand.classList.add('morning');
+                    clockCenter.classList.add('morning');
+                } else if (value === 1) {
+                    clockHand.classList.add('noon');
+                    clockCenter.classList.add('noon');
+                } else if (value === 2) {
+                    clockHand.classList.add('night');
+                    clockCenter.classList.add('night');
+                }
+                
+                // Update markers
+                updateMarkers(value);
+                
+                // Reset pin index when changing time
+                currentPinIndex = 0;
+                updateNavigationUI();
+                
+                // Don't recenter map - allow user to stay focused on their current view
+                // This lets users see how popup content changes across time periods
+            });
+        });
+        
+        // Navigation functions
+        function navigateToPin(index) {
+            if (index < 0 || index >= markers.length) return;
+            
+            currentPinIndex = index;
+            const marker = markers[index];
+            
+            // Fly to marker with smooth, gentle animation
+            map.flyTo([marker._pointData.lat, marker._pointData.lon], 17, { 
+                animate: true, 
+                duration: 1.2,
+                easeLinearity: 0.15
+            });
+            
+            // Open popup
+            marker.openPopup();
+            
+            // Highlight card in sidebar
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(c => c.classList.remove('active'));
+            if (cards[index]) {
+                cards[index].classList.add('active');
+                // Scroll card into view
+                cards[index].scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+            
+            // Update navigation UI
+            updateNavigationUI();
+        }
+        
+        function updateNavigationUI() {
+            const prevBtn = document.getElementById('prevPin');
+            const nextBtn = document.getElementById('nextPin');
+            
+            // Disable buttons at boundaries
+            if (prevBtn) prevBtn.disabled = currentPinIndex === 0;
+            if (nextBtn) nextBtn.disabled = currentPinIndex === markers.length - 1;
+        }
+        
+        // Navigation button handlers
+        const prevBtn = document.getElementById('prevPin');
+        const nextBtn = document.getElementById('nextPin');
+        const homeBtn = document.getElementById('homeBtn');
+        
+        if (prevBtn) {
+            prevBtn.addEventListener('click', () => {
+                if (currentPinIndex > 0) {
+                    navigateToPin(currentPinIndex - 1);
+                }
+            });
+        }
+        
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                if (currentPinIndex < markers.length - 1) {
+                    navigateToPin(currentPinIndex + 1);
+                }
+            });
+        }
+        
+        if (homeBtn) {
+            homeBtn.addEventListener('click', () => {
+                // Reset to initial view showing all markers
+                if (markers && markers.length > 0) {
+                    const group = L.featureGroup(markers);
+                    map.flyToBounds(group.getBounds().pad(0.1), {
+                        animate: true,
+                        duration: 1.5,
+                        easeLinearity: 0.15
+                    });
+                }
+            });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowLeft') {
+                if (currentPinIndex > 0) {
+                    navigateToPin(currentPinIndex - 1);
+                }
+            } else if (e.key === 'ArrowRight') {
+                if (currentPinIndex < markers.length - 1) {
+                    navigateToPin(currentPinIndex + 1);
+                }
+            }
+        });
+        
+        // Initialize navigation UI
+        updateNavigationUI();
+    </script>
+</body>
+</html>
