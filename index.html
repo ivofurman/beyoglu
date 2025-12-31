@@ -872,11 +872,10 @@
                 // Determine time class based on timeIndex
                 const timeClass = timeIndex === 0 ? 'time-morning' : timeIndex === 1 ? 'time-noon' : 'time-night';
                 
-                // Create popup content (removed location line)
+                // Create popup content (removed location line and type line)
                 const popupContent = `
                     <div>
                         <h3 class="popup-title ${timeClass}">${escapeHtml(point.name)}</h3>
-                        <div class="popup-type"><strong>Tür:</strong> ${escapeHtml(point.type)}</div>
                         ${point.description ? `<div class="popup-description">${escapeHtml(point.description)}</div>` : ''}
                         ${point.image ? `<div class="popup-media">${point.image}</div>` : ''}
                         ${point.audio ? `<div class="popup-media">${point.audio}</div>` : ''}
@@ -894,20 +893,23 @@
                 markers.push(marker);
                 
                 // Add click event to center map on tooltip when popup opens
-                marker.on('click', function() {
-                    // Pan to marker first
-                    map.panTo(this.getLatLng());
-                    
-                    // Wait for popup to open, then adjust view to center the tooltip
+                marker.on('popupopen', function() {
+                    // Wait for popup to fully render, then adjust view to center the tooltip (not the pin)
                     setTimeout(() => {
                         const popup = this.getPopup();
                         if (popup && popup.isOpen()) {
-                            // Get the popup position and adjust map center to account for popup offset
+                            // Get the marker position and adjust map center to account for popup height
+                            // This centers the tooltip in the viewport, not the pin
                             const px = map.project(this.getLatLng());
-                            px.y -= 100; // Offset to center the popup vertically in viewport
+                            
+                            // Calculate offset based on popup height to center the tooltip itself
+                            // Popup is above the marker, so we shift view down to center the tooltip
+                            const popupHeight = popup.getElement() ? popup.getElement().offsetHeight : 300;
+                            px.y -= popupHeight / 2; // Shift up by half the popup height to center it
+                            
                             map.panTo(map.unproject(px), {animate: true, duration: 0.5});
                         }
-                    }, 100);
+                    }, 150);
                 });
                 
                 // Store reference for card click
