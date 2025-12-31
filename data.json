@@ -74,7 +74,9 @@
       "type": "Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Sabah: Boş ve sessiz; geceye hazırlık gibi.",
-      "color": "#EBED58"
+      "color": "#EBED58",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Nevizade_Sokak_Sabah_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Nevizade Sokak Sabah Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/Nevizade_Sokak_Sabah_Foto%C4%9Fraf.jpg/256px-Nevizade_Sokak_Sabah_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Nevizade_Sokak_Sabah_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen></iframe>"
     },
     {
       "name": "St. Antuan Kilisesi",
@@ -243,7 +245,9 @@
       "type": "Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Öğle: Yine sakin; gündüz kullanım neredeyse yok.",
-      "color": "#DE9612"
+      "color": "#DE9612",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Nevizade_Sokak_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Nevizade Sokak Öğlen Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/Nevizade_Sokak_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg/256px-Nevizade_Sokak_%C3%96%C4%9Flen_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Nevizade_Sokak_%C3%96%C4%9Flen_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen></iframe>"
     },
     {
       "name": "St. Antuan Kilisesi",
@@ -412,7 +416,9 @@
       "type": "Tarihi Sokak / Yeme-İçme ve Sosyal Yaşam Alanı",
       "method": "Görsel Belgeleme / Ses Yürüyüşü",
       "description": "Akşam: Patlama noktası; bar müziği, kalabalık ve eğlence sesleri sokağı dolduruyor.",
-      "color": "#3E87A3"
+      "color": "#3E87A3",
+      "image": "<a title=\"Asibala, CC0, via Wikimedia Commons\" href=\"https://commons.wikimedia.org/wiki/File:Nevizade_Sokak_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"><img width=\"256\" alt=\"Nevizade Sokak Akşam Fotoğraf\" src=\"https://upload.wikimedia.org/wikipedia/commons/thumb/Nevizade_Sokak_Ak%C5%9Fam_Foto%C4%9Fraf.jpg/256px-Nevizade_Sokak_Ak%C5%9Fam_Foto%C4%9Fraf.jpg\"></a>",
+      "audio": "<iframe src=\"https://commons.wikimedia.org/wiki/File:Nevizade_Sokak_Ak%C5%9Fam_Ses.wav?embedplayer=yes\" width=\"300\" height=\"20\" frameborder=\"0\" loading=\"lazy\" allow=\"autoplay; picture-in-picture\" allowfullscreen></iframe>"
     },
     {
       "name": "St. Antuan Kilisesi",
