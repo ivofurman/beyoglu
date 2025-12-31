@@ -407,7 +407,9 @@
         .leaflet-popup-content {
             margin: 16px !important;
             color: var(--text) !important;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+            font-family: 'Open Sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif !important;
+            min-width: 280px !important;
+            max-width: 400px !important;
         }
         
         .leaflet-popup-tip {
@@ -848,8 +850,8 @@
                         <h3 class="popup-title ${timeClass}">${escapeHtml(point.name)}</h3>
                         <div class="popup-type"><strong>Tür:</strong> ${escapeHtml(point.type)}</div>
                         ${point.description ? `<div class="popup-description">${escapeHtml(point.description)}</div>` : ''}
-                        ${point.image ? `<div class="popup-media"><img src="${escapeHtml(point.image)}" alt="${escapeHtml(point.name)}" class="popup-image" loading="lazy"></div>` : ''}
-                        ${point.audio ? `<div class="popup-media"><audio controls class="popup-audio"><source src="${escapeHtml(point.audio)}" type="audio/wav">Your browser does not support the audio element.</audio></div>` : ''}
+                        ${point.image ? `<div class="popup-media"><img src="${point.image}" alt="${escapeHtml(point.name)}" class="popup-image" loading="lazy" onerror="this.style.display='none'"></div>` : ''}
+                        ${point.audio ? `<div class="popup-media"><audio controls class="popup-audio" preload="metadata"><source src="${point.audio}" type="audio/wav">Your browser does not support the audio element.</audio></div>` : ''}
                     </div>
                 `;
                 
